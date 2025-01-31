@@ -14,7 +14,7 @@ export default function Home() {
     setPosition({ x: randomTop, y: randomLeft });
   };
   const handleYesClick = () => {
-    setMessage("See you on Feb 14! :)");
+    setMessage("See you on Feb 14 :)");
     setBtnVisible(false);
   };
 
