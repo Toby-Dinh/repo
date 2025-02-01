@@ -30,11 +30,8 @@ export default function Home() {
       </div>
       {/* options */}
       {optionsVisible && (
-        <div className="absolute bg-[#FEED9F] flex flex-col text-[#807256] px-24 py-6 space-y-6 rounded-full font-semibold text-[2rem] ml-[60rem]">
-            <button className="relative px-2 rounded-full">
-              <span className="relative z-10">Yes</span>
-              <div className="absolute inset-x-0 bottom-1 bg-[#FFCF00] h-2/5 w-full rounded-full"></div>
-            </button>
+        <div className="absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] flex flex-col text-[#807256] px-20 py-3 space-y-3 font-semibold text-[2rem] ml-[56rem]">
+          <button>Yes</button>
           <button>No</button>
         </div>
       )}
