@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export default function Home() {
-  const [message, setMessage] = useState("Will you be my valentines?");
+  const [message, setMessage] = useState("Alisa, will you be my valentine?");
   const [optionsVisible, setOptionsVisible] = useState(true);
   return (
     <div className="flex items-center justify-center h-screen">
@@ -24,11 +24,17 @@ export default function Home() {
             Toby Nooks
           </div>
         </div>
+        <svg className="absolute bottom-0 left-[50%] translate-x-[-50%] animate-arrow" width="45" height="25" viewBox="0 0 45 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.5 25C18.0184 25 7.59473 12.6404 1.55317 4.96431C-0.122281 2.83559 1.72264 -0.179893 4.39835 0.243337C10.2831 1.17415 18.2164 2.28736 22.5 2.28736C26.7836 2.28736 34.7169 1.17415 40.6017 0.243339C43.2774 -0.17989 45.1223 2.83559 43.4468 4.96431C37.4053 12.6404 26.9816 25 22.5 25Z" fill="#F1AE04"/>
+        </svg>
       </div>
       {/* options */}
       {optionsVisible && (
-        <div className="absolute bg-[#FEED9F] flex flex-col text-[#807256] px-28 py-6 space-y-6 rounded-full font-semibold text-[2rem] ml-[60rem]">
-          <button>Yes</button>
+        <div className="absolute bg-[#FEED9F] flex flex-col text-[#807256] px-24 py-6 space-y-6 rounded-full font-semibold text-[2rem] ml-[60rem]">
+            <button className="relative px-2 rounded-full">
+              <span className="relative z-10">Yes</span>
+              <div className="absolute inset-x-0 bottom-1 bg-[#FFCF00] h-2/5 w-full rounded-full"></div>
+            </button>
           <button>No</button>
         </div>
       )}
