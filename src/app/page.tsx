@@ -1,26 +1,96 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  const [message, setMessage] = useState("Alisa, will you be my valentine?");
+  const messages = {
+    msgs: [
+      "Hello <span style='color: #DD8416;'>Alisa</span>! I programmed this animal crossing themed website for you and I hope you like it. Press SPACE to continue.",
+      "I just wanted to say thank you so SO much for being here for me and always supporting me through everything.",
+      "I still remember the first time we met and how nervous I felt talking to you... Now here we are, 4 years later and I couldn't be happier.",
+      "You've done so much for me and I just want to remind you that I'll always be here for you no matter what and that I love you so much.",
+      "I really appreciate everything you do for me to make me happy. You mean so much to me and I'm so grateful that I have you in my life.",
+      "Alisa... Will you be my valentines?",
+    ],
+    yes_msg: [
+      "See you on the 14th of February!",
+    ],
+    no_msgs: [
+      "Can you please be my valentines...?",
+      "pretty please...?",
+      "Can you PLEASE PLEASE PLEASE PLEASE PLEASE be my valentines...?",
+    ]
+  };
+
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [noMessageIndex, setNoMessageIndex] = useState(0);
   const [optionsVisible, setOptionsVisible] = useState(true);
+  const [displayMessage, setDisplayMessage] = useState(messages.msgs[0]);
+  const [isNoClicked, setIsNoClicked] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === "Space") {
+        if (optionsVisible && !isNoClicked) {
+          setMessageIndex((prevIndex) => {
+            if (prevIndex < messages.msgs.length - 1) {
+              return prevIndex + 1;
+            } else {
+              return prevIndex;
+            }
+          });
+        } else if (isNoClicked) {
+          setNoMessageIndex((prevIndex) => {
+            const newIndex = (prevIndex + 1) % messages.no_msgs.length;
+            setDisplayMessage(messages.no_msgs[newIndex]);
+            return newIndex;
+          });
+        }
+      }
+    };
+
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked]);
+
+  useEffect(() => {
+    if (optionsVisible && !isNoClicked) {
+      setDisplayMessage(messages.msgs[messageIndex]);
+    }
+  }, [messageIndex, messages.msgs, optionsVisible, isNoClicked]);
+
+  const handleYesClick = () => {
+    setDisplayMessage(messages.yes_msg[0]);
+    setOptionsVisible(false);
+    setIsNoClicked(false);
+  };
+
+  const handleNoClick = () => {
+    setNoMessageIndex((prevIndex) => {
+      const newIndex = (prevIndex + 1) % messages.no_msgs.length;
+      setDisplayMessage(messages.no_msgs[newIndex]);
+      return newIndex;
+    });
+    setIsNoClicked(true);
+  };
+
   return (
     <div className="flex items-center justify-center h-screen">
-
       {/* speech bubble */}
       <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
         <div className="relative w-[100%] flex flex-col items-center justify-stretch">
-          <div className="absolute top-0 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_20%_20%/150%_150%_150%_150%] "></div>
-          <div className="absolute bottom-0 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] "></div>
+          <div className="absolute top-0 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_20%_20%/150%_150%_150%_150%]"></div>
+          <div className="absolute bottom-0 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%]"></div>
           <div className="absolute w-full p-[1em_1em_2em_2em] text-[2.5rem] leading-[1.5em] text-[#807256] font-sans font-bold">
-            {message}
+            <span dangerouslySetInnerHTML={{ __html: displayMessage }} />
           </div>
         </div>
         <div className="absolute perspective-[2rem]">
-          <div className="inline-block mr-auto px-8 p-2 text-2xl text-[#FFFAE5] bg-[#81A7FF] 
-          rounded-[30%/100%_100%_120%_120%] -rotate-[5deg] translate-x-[20%] 
-          translate-y-[-45%] font-sans font-semibold">
+          <div className="inline-block mr-auto px-8 p-2 text-2xl text-[#FFFAE5] bg-[#81A7FF] rounded-[30%/100%_100%_120%_120%] -rotate-[5deg] translate-x-[20%] translate-y-[-45%] font-sans font-semibold">
             Toby Nooks
           </div>
         </div>
@@ -31,12 +101,18 @@ export default function Home() {
       {/* options */}
       {optionsVisible && (
         <div className="absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] flex flex-col text-[#807256] px-20 py-6 space-y-3 font-semibold text-[2rem] ml-[56rem]">
-          <button className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group">
+          <button
+            className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+            onClick={handleYesClick}
+          >
             <span className="relative z-10">Yes</span>
             <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
           </button>
 
-          <button className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group">
+          <button
+            className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+            onClick={handleNoClick}
+          >
             <span className="relative z-10">No</span>
             <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
           </button>
