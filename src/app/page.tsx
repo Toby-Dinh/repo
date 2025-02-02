@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import music from "../public/audio/music.mp3";
 
 export default function Home() {
   const messages = {
@@ -27,6 +28,18 @@ export default function Home() {
   const [optionsVisible, setOptionsVisible] = useState(true);
   const [displayMessage, setDisplayMessage] = useState(messages.msgs[0]);
   const [isNoClicked, setIsNoClicked] = useState(false);
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play();
+      }
+    }, 2000); // Play music after 2 seconds
+
+    return () => clearTimeout(timeoutId); // Cleanup timeout
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -80,6 +93,8 @@ export default function Home() {
 
   return (
     <div className="flex items-center justify-center h-screen">
+      {/* audio */}
+      <audio ref={audioRef} src={music} loop /> 
       {/* speech bubble */}
       <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
         <div className="relative w-[100%] flex flex-col items-center justify-stretch">
