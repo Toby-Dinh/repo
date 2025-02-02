@@ -159,11 +159,29 @@ export default function Home() {
       {/* audio */}
       <audio ref={audioRef} src="/audio/music.mp3" loop />
       <audio ref={messageAudioRef} id="message-audio" />
+      {/* SVG filter */}
+      <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
+        <defs>
+          <filter id="fancy-goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0  
+                      0 1 0 0 0  
+                      0 0 1 0 0  
+                      0 0 0 19 -9"
+              result="goo"
+            />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
       {/* speech bubble */}
       <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
-        <div className="relative w-[100%] flex flex-col items-center justify-stretch">
-          <div className="absolute top-0 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_20%_20%/150%_150%_150%_150%]"></div>
-          <div className="absolute bottom-0 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%]"></div>
+        <div className="relative w-[100%] flex flex-col items-center justify-stretch animate-pop-up" style={{ filter: "url(#fancy-goo)" }}>
+          <div className="absolute top-0 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_30%_30%/150%_150%_150%_150%] animate-dialogue-top origin-center"></div>
+          <div className="absolute bottom-0 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] animate-dialogue-bottom origin-center"></div>
           <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.5em] text-[#807256] font-sans font-bold">
             {typedMessage}
           </div>
@@ -189,7 +207,7 @@ export default function Home() {
       </div>
       {/* options */}
       {optionsVisible && messageIndex === messages.msgs.length - 1 && (
-        <div className="absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] flex flex-col text-[#807256] px-20 py-6 space-y-3 font-semibold text-[2rem] ml-[56rem]">
+        <div className="absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] flex flex-col text-[#807256] px-20 py-6 space-y-3 font-semibold text-[2rem] ml-[56rem]" style={{ filter: "url(#fancy-goo)" }}>
           <button
             className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
             onClick={handleYesClick}
