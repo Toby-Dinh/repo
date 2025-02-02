@@ -182,7 +182,7 @@ export default function Home() {
         <div className="relative w-[100%] flex flex-col items-center justify-stretch animate-pop-up" style={{ filter: "url(#fancy-goo)" }}>
           <div className="absolute top-2 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_30%_30%/150%_150%_150%_150%] animate-dialogue-top origin-center"></div>
           <div className="absolute bottom-2 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] animate-dialogue-bottom origin-center"></div>
-          <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.5em] text-[#807256] font-sans font-bold">
+          <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.6em] text-[#807256] font-sans font-bold">
             {typedMessage}
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function Home() {
           </div>
         </div>
         <svg
-          className="absolute bottom-0 left-[50%] translate-x-[-50%] animate-arrow"
+          className="absolute bottom-2 left-[50%] translate-x-[-50%] animate-arrow"
           width="45"
           height="25"
           viewBox="0 0 45 25"
@@ -201,7 +201,7 @@ export default function Home() {
         >
           <path
             d="M22.5 25C18.0184 25 7.59473 12.6404 1.55317 4.96431C-0.122281 2.83559 1.72264 -0.179893 4.39835 0.243337C10.2831 1.17415 18.2164 2.28736 22.5 2.28736C26.7836 2.28736 34.7169 1.17415 40.6017 0.243339C43.2774 -0.17989 45.1223 2.83559 43.4468 4.96431C37.4053 12.6404 26.9816 25 22.5 25Z"
-            fill="#F1AE04"
+            fill="#FEB703"
           />
         </svg>
       </div>
