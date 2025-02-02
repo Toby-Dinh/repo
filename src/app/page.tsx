@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Navbar from "./navbar"; // Correct import statement
 
 export default function Home() {
   const messages = {
@@ -13,12 +14,13 @@ export default function Home() {
       "Alisa... Will you be my valentines?",
     ],
     yes_msg: [
-      "See you on the 14th of February!",
+      "See you on the 14th of February! I love you!",
     ],
     no_msgs: [
       "Can you please be my valentines...?",
-      "pretty please...?",
-      "Can you PLEASE PLEASE PLEASE PLEASE PLEASE be my valentines...?",
+      "Are you sure?",
+      "Are you 100% certain you want to say no?",
+      "Can you please be my valentines?",
     ]
   };
 
@@ -28,12 +30,14 @@ export default function Home() {
   const [displayMessage, setDisplayMessage] = useState(messages.msgs[0]);
   const [isNoClicked, setIsNoClicked] = useState(false);
   const [audioPlayed, setAudioPlayed] = useState(false);
+  const [typedMessage, setTypedMessage] = useState("");
+  const typingSpeed = 50; // Adjust typing speed here 
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const handlePlayAudio = () => {
     if (audioRef.current && !audioPlayed) {
-      audioRef.current.volume = 0.4; // Set volume to 40%
+      audioRef.current.volume = 0.2; // Set volume to 40%
       audioRef.current.play();
       setAudioPlayed(true);
     }
@@ -74,6 +78,20 @@ export default function Home() {
     }
   }, [messageIndex, messages.msgs, optionsVisible, isNoClicked]);
 
+  useEffect(() => {
+    let currentCharIndex = 0;
+    const typeMessage = () => {
+      if (currentCharIndex < displayMessage.length) {
+        setTypedMessage((prev) => prev + displayMessage[currentCharIndex]);
+        currentCharIndex++;
+        setTimeout(typeMessage, typingSpeed);
+      }
+    };
+
+    setTypedMessage("");
+    typeMessage();
+  }, [displayMessage]);
+
   const handleYesClick = () => {
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
@@ -91,6 +109,7 @@ export default function Home() {
 
   return (
     <div className="flex items-center justify-center h-screen" onClick={handlePlayAudio}>
+      <Navbar />
       {/* audio */}
       <audio ref={audioRef} src="/audio/music.mp3" loop /> 
       {/* speech bubble */}
@@ -99,7 +118,7 @@ export default function Home() {
           <div className="absolute top-0 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_20%_20%/150%_150%_150%_150%]"></div>
           <div className="absolute bottom-0 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%]"></div>
           <div className="absolute w-full p-[1em_1em_2em_2em] text-[2.5rem] leading-[1.5em] text-[#807256] font-sans font-bold">
-            <span dangerouslySetInnerHTML={{ __html: displayMessage }} />
+            <span dangerouslySetInnerHTML={{ __html: typedMessage }} />
           </div>
         </div>
         <div className="absolute perspective-[2rem]">
