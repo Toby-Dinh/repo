@@ -99,7 +99,23 @@ export default function Home() {
 
   useEffect(() => {
     if (!optionsVisible || isNoClicked) {
-      setTypedMessage(displayMessage);
+      setTypedMessage("");
+      let currentCharIndex = 0;
+      let timeoutId: NodeJS.Timeout;
+
+      const typeMessage = () => {
+        if (currentCharIndex <= displayMessage.length) {
+          setTypedMessage(displayMessage.slice(0, currentCharIndex));
+          currentCharIndex++;
+          timeoutId = setTimeout(typeMessage, typingSpeed);
+        }
+      };
+
+      typeMessage();
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
   }, [displayMessage, optionsVisible, isNoClicked]);
 
