@@ -168,7 +168,7 @@ export default function Home() {
             {typedMessage}
           </div>
         </div>
-        <div className="absolute perspective-[2rem]">
+        <div className="absolute perspective-[2rem] animate-custom-bounce">
           <div className="inline-block mr-auto px-8 p-2 text-2xl text-[#FFFAE5] bg-[#81A7FF] rounded-[30%/100%_100%_120%_120%] -rotate-[5deg] translate-x-[20%] translate-y-[-45%] font-sans font-semibold">
             Toby Nooks
           </div>

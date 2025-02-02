@@ -17,9 +17,14 @@ export default {
           '0%': { transform: 'translateY(33%) translateX(-50%) scale(1)', opacity: '1' },
           '100%': { transform: 'translateY(50%) translateX(-50%) scale(0.9)', opacity: '1' },
         },
+        customBounce: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+        },
       },
       animation: {
         arrow: 'arrow 0.6s cubic-bezier(0.37, 0, 0.63, 1) 4.5s infinite alternate',
+        'custom-bounce': 'customBounce 1.5s infinite alternate cubic-bezier(0.37, 0, 0.63, 1)',
       },
     },
   },
