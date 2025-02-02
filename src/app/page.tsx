@@ -1,27 +1,25 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Navbar from "./navbar"; // Correct import statement
+import Navbar from "./navbar";
 
 export default function Home() {
   const messages = {
     msgs: [
-      "Hello <span style='color: #DD8416;'>Alisa</span>! I programmed this animal crossing themed website for you and I hope you like it. Press SPACE to continue.",
+      "Hello Alisa I programmed this animal crossing themed website for you and I hope you like it. Press SPACE to continue.",
       "I just wanted to say thank you so SO much for being here for me and always supporting me through everything.",
       "I still remember the first time we met and how nervous I felt talking to you... Now here we are, 4 years later and I couldn't be happier.",
       "You've done so much for me and I just want to remind you that I'll always be here for you no matter what and that I love you so much.",
       "I really appreciate everything you do for me to make me happy. You mean so much to me and I'm so grateful that I have you in my life.",
       "Alisa... Will you be my valentines?",
     ],
-    yes_msg: [
-      "See you on the 14th of February! I love you!",
-    ],
+    yes_msg: ["See you on the 14th of February! I love you!"],
     no_msgs: [
       "Can you please be my valentines...?",
       "Are you sure?",
       "Are you 100% certain you want to say no?",
       "Can you please be my valentines?",
-    ]
+    ],
   };
 
   const [messageIndex, setMessageIndex] = useState(0);
@@ -31,7 +29,7 @@ export default function Home() {
   const [isNoClicked, setIsNoClicked] = useState(false);
   const [audioPlayed, setAudioPlayed] = useState(false);
   const [typedMessage, setTypedMessage] = useState("");
-  const typingSpeed = 50; // Adjust typing speed here 
+  const typingSpeed = 50; // Adjust typing speed here
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -77,20 +75,33 @@ export default function Home() {
       setDisplayMessage(messages.msgs[messageIndex]);
     }
   }, [messageIndex, messages.msgs, optionsVisible, isNoClicked]);
-
+  
+  // Typing Effect
   useEffect(() => {
     let currentCharIndex = 0;
+    let timeoutId: NodeJS.Timeout;
+
     const typeMessage = () => {
-      if (currentCharIndex < displayMessage.length) {
-        setTypedMessage((prev) => prev + displayMessage[currentCharIndex]);
+      if (currentCharIndex <= displayMessage.length) {
+        setTypedMessage(displayMessage.slice(0, currentCharIndex));
         currentCharIndex++;
-        setTimeout(typeMessage, typingSpeed);
+        timeoutId = setTimeout(typeMessage, typingSpeed);
       }
     };
 
-    setTypedMessage("");
+    setTypedMessage(""); 
     typeMessage();
-  }, [displayMessage]);
+
+    return () => {
+      clearTimeout(timeoutId); 
+    };
+  }, [displayMessage, typingSpeed]);
+
+  useEffect(() => {
+    if (!optionsVisible || isNoClicked) {
+      setTypedMessage(displayMessage);
+    }
+  }, [displayMessage, optionsVisible, isNoClicked]);
 
   const handleYesClick = () => {
     setDisplayMessage(messages.yes_msg[0]);
@@ -111,14 +122,14 @@ export default function Home() {
     <div className="flex items-center justify-center h-screen" onClick={handlePlayAudio}>
       <Navbar />
       {/* audio */}
-      <audio ref={audioRef} src="/audio/music.mp3" loop /> 
+      <audio ref={audioRef} src="/audio/music.mp3" loop />
       {/* speech bubble */}
       <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
         <div className="relative w-[100%] flex flex-col items-center justify-stretch">
           <div className="absolute top-0 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_20%_20%/150%_150%_150%_150%]"></div>
           <div className="absolute bottom-0 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%]"></div>
           <div className="absolute w-full p-[1em_1em_2em_2em] text-[2.5rem] leading-[1.5em] text-[#807256] font-sans font-bold">
-            <span dangerouslySetInnerHTML={{ __html: typedMessage }} />
+            {typedMessage}
           </div>
         </div>
         <div className="absolute perspective-[2rem]">
@@ -126,8 +137,18 @@ export default function Home() {
             Toby Nooks
           </div>
         </div>
-        <svg className="absolute bottom-0 left-[50%] translate-x-[-50%] animate-arrow" width="45" height="25" viewBox="0 0 45 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.5 25C18.0184 25 7.59473 12.6404 1.55317 4.96431C-0.122281 2.83559 1.72264 -0.179893 4.39835 0.243337C10.2831 1.17415 18.2164 2.28736 22.5 2.28736C26.7836 2.28736 34.7169 1.17415 40.6017 0.243339C43.2774 -0.17989 45.1223 2.83559 43.4468 4.96431C37.4053 12.6404 26.9816 25 22.5 25Z" fill="#F1AE04"/>
+        <svg
+          className="absolute bottom-0 left-[50%] translate-x-[-50%] animate-arrow"
+          width="45"
+          height="25"
+          viewBox="0 0 45 25"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M22.5 25C18.0184 25 7.59473 12.6404 1.55317 4.96431C-0.122281 2.83559 1.72264 -0.179893 4.39835 0.243337C10.2831 1.17415 18.2164 2.28736 22.5 2.28736C26.7836 2.28736 34.7169 1.17415 40.6017 0.243339C43.2774 -0.17989 45.1223 2.83559 43.4468 4.96431C37.4053 12.6404 26.9816 25 22.5 25Z"
+            fill="#F1AE04"
+          />
         </svg>
       </div>
       {/* options */}
