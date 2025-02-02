@@ -29,9 +29,10 @@ export default function Home() {
   const [isNoClicked, setIsNoClicked] = useState(false);
   const [audioPlayed, setAudioPlayed] = useState(false);
   const [typedMessage, setTypedMessage] = useState("");
-  const typingSpeed = 50; // Adjust typing speed here
+  const typingSpeed = 68; // Adjust typing speed here
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const messageAudioRef = useRef<HTMLAudioElement>(null);
 
   const handlePlayAudio = () => {
     if (audioRef.current && !audioPlayed) {
@@ -92,30 +93,21 @@ export default function Home() {
     setTypedMessage(""); 
     typeMessage();
 
+    if (messageAudioRef.current) {
+      messageAudioRef.current.src = `/audio/msg${messageIndex + 1}.wav`;
+      messageAudioRef.current.play().catch((error) => {
+        console.error("Failed to play message audio:", error);
+      });
+    }
+
     return () => {
       clearTimeout(timeoutId); 
     };
-  }, [displayMessage, typingSpeed]);
+  }, [displayMessage, typingSpeed, messageIndex]);
 
   useEffect(() => {
     if (!optionsVisible || isNoClicked) {
-      setTypedMessage("");
-      let currentCharIndex = 0;
-      let timeoutId: NodeJS.Timeout;
-
-      const typeMessage = () => {
-        if (currentCharIndex <= displayMessage.length) {
-          setTypedMessage(displayMessage.slice(0, currentCharIndex));
-          currentCharIndex++;
-          timeoutId = setTimeout(typeMessage, typingSpeed);
-        }
-      };
-
-      typeMessage();
-
-      return () => {
-        clearTimeout(timeoutId);
-      };
+      setTypedMessage(displayMessage);
     }
   }, [displayMessage, optionsVisible, isNoClicked]);
 
@@ -139,6 +131,7 @@ export default function Home() {
       <Navbar />
       {/* audio */}
       <audio ref={audioRef} src="/audio/music.mp3" loop />
+      <audio ref={messageAudioRef} id="message-audio" />
       {/* speech bubble */}
       <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
         <div className="relative w-[100%] flex flex-col items-center justify-stretch">
