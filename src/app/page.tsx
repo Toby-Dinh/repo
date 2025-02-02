@@ -11,14 +11,14 @@ export default function Home() {
       "I still remember the first time we met and how nervous I felt talking to you... Now here we are, 4 years later and I couldn't be happier.",
       "You've done so much for me and I just want to remind you that I'll always be here for you no matter what and that I love you so much.",
       "I really appreciate everything you do for me to make me happy. You mean so much to me and I'm so grateful that I have you in my life.",
-      "Alisa... Will you be my valentines?",
+      "Alisa... Will you be my valentine?",
     ],
     yes_msg: ["See you on the 14th of February! I love you!"],
     no_msgs: [
-      "Can you please be my valentines...?",
-      "Are you sure?",
-      "Are you 100% certain you want to say no?",
-      "Can you please be my valentines?",
+      "Please please please please please please please please please please",
+      "Can you please be my valentine...?",
+      "What if I got you a puppy?",
+      "Okay fine, a puppy and a kitten? Now will you be my valentine?",
     ],
   };
 
@@ -27,6 +27,7 @@ export default function Home() {
   const [optionsVisible, setOptionsVisible] = useState(true);
   const [displayMessage, setDisplayMessage] = useState(messages.msgs[0]);
   const [isNoClicked, setIsNoClicked] = useState(false);
+  const [isYesClicked, setIsYesClicked] = useState(false);
   const [audioPlayed, setAudioPlayed] = useState(false);
   const [typedMessage, setTypedMessage] = useState("");
   const typingSpeed = 68; // Adjust typing speed here
@@ -36,7 +37,7 @@ export default function Home() {
 
   const handlePlayAudio = () => {
     if (audioRef.current && !audioPlayed) {
-      audioRef.current.volume = 0.2; // Set volume to 40%
+      audioRef.current.volume = 0.2; // Set volume to 20%
       audioRef.current.play();
       setAudioPlayed(true);
     }
@@ -94,7 +95,14 @@ export default function Home() {
     typeMessage();
 
     if (messageAudioRef.current) {
-      messageAudioRef.current.src = `/audio/msg${messageIndex + 1}.wav`;
+      if (isNoClicked === true) {
+        messageAudioRef.current.src = `/audio/noMsg${noMessageIndex + 1}.wav`;
+      } else if (isYesClicked === true) {
+        messageAudioRef.current.src = "/audio/yesMsg.wav";
+      }
+      else {
+        messageAudioRef.current.src = `/audio/msg${messageIndex + 1}.wav`;
+      }
       messageAudioRef.current.play().catch((error) => {
         console.error("Failed to play message audio:", error);
       });
@@ -115,6 +123,7 @@ export default function Home() {
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
     setIsNoClicked(false);
+    setIsYesClicked(true);
   };
 
   const handleNoClick = () => {
@@ -137,7 +146,7 @@ export default function Home() {
         <div className="relative w-[100%] flex flex-col items-center justify-stretch">
           <div className="absolute top-0 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_20%_20%/150%_150%_150%_150%]"></div>
           <div className="absolute bottom-0 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%]"></div>
-          <div className="absolute w-full p-[1em_1em_2em_2em] text-[2.5rem] leading-[1.5em] text-[#807256] font-sans font-bold">
+          <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.5em] text-[#807256] font-sans font-bold">
             {typedMessage}
           </div>
         </div>
