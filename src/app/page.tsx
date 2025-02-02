@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import music from "../public/audio/music.mp3";
 
 export default function Home() {
   const messages = {
@@ -28,22 +27,22 @@ export default function Home() {
   const [optionsVisible, setOptionsVisible] = useState(true);
   const [displayMessage, setDisplayMessage] = useState(messages.msgs[0]);
   const [isNoClicked, setIsNoClicked] = useState(false);
+  const [audioPlayed, setAudioPlayed] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (audioRef.current) {
-        audioRef.current.play();
-      }
-    }, 2000); // Play music after 2 seconds
-
-    return () => clearTimeout(timeoutId); // Cleanup timeout
-  }, []);
+  const handlePlayAudio = () => {
+    if (audioRef.current && !audioPlayed) {
+      audioRef.current.volume = 0.4; // Set volume to 40%
+      audioRef.current.play();
+      setAudioPlayed(true);
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
+        handlePlayAudio();
         if (optionsVisible && !isNoClicked) {
           setMessageIndex((prevIndex) => {
             if (prevIndex < messages.msgs.length - 1) {
@@ -62,13 +61,12 @@ export default function Home() {
       }
     };
 
-
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked]);
+  }, [messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, audioPlayed]);
 
   useEffect(() => {
     if (optionsVisible && !isNoClicked) {
@@ -92,9 +90,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-screen" onClick={handlePlayAudio}>
       {/* audio */}
-      <audio ref={audioRef} src={music} loop /> 
+      <audio ref={audioRef} src="/audio/music.mp3" loop /> 
       {/* speech bubble */}
       <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
         <div className="relative w-[100%] flex flex-col items-center justify-stretch">
