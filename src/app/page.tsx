@@ -111,13 +111,29 @@ export default function Home() {
     return () => {
       clearTimeout(timeoutId); 
     };
-  }, [displayMessage, typingSpeed, messageIndex]);
+  }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked]);
 
   useEffect(() => {
-    if (!optionsVisible || isNoClicked) {
-      setTypedMessage(displayMessage);
+    if (!optionsVisible || isNoClicked || isYesClicked) {
+      setTypedMessage("");
+      let currentCharIndex = 0;
+      let timeoutId: NodeJS.Timeout;
+
+      const typeMessage = () => {
+        if (currentCharIndex <= displayMessage.length) {
+          setTypedMessage(displayMessage.slice(0, currentCharIndex));
+          currentCharIndex++;
+          timeoutId = setTimeout(typeMessage, typingSpeed);
+        }
+      };
+
+      typeMessage();
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
-  }, [displayMessage, optionsVisible, isNoClicked]);
+  }, [displayMessage, optionsVisible, isNoClicked, isYesClicked]);
 
   const handleYesClick = () => {
     setDisplayMessage(messages.yes_msg[0]);
@@ -170,7 +186,7 @@ export default function Home() {
         </svg>
       </div>
       {/* options */}
-      {optionsVisible && (
+      {optionsVisible && messageIndex === messages.msgs.length - 1 && (
         <div className="absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] flex flex-col text-[#807256] px-20 py-6 space-y-3 font-semibold text-[2rem] ml-[56rem]">
           <button
             className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
