@@ -136,6 +136,7 @@ export default function Home() {
   }, [displayMessage, optionsVisible, isNoClicked, isYesClicked]);
 
   const handleYesClick = () => {
+    setTypedMessage(""); // Clear typed message before setting new display message
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
     setIsNoClicked(false);
@@ -143,6 +144,7 @@ export default function Home() {
   };
 
   const handleNoClick = () => {
+    setTypedMessage(""); // Clear typed message before setting new display message
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
       setDisplayMessage(messages.no_msgs[newIndex]);
