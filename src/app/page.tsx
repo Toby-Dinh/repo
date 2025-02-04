@@ -31,6 +31,7 @@ export default function Home() {
   const [audioPlayed, setAudioPlayed] = useState(false);
   const [typedMessage, setTypedMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isDialogueVisible, setIsDialogueVisible] = useState(false);
   const typingSpeed = 68; // Adjust typing speed here
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -39,8 +40,11 @@ export default function Home() {
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
+      setTimeout(() => {
+        setIsDialogueVisible(true);
+      }, 1000);
     }, 5000);
-  }, [])
+  }, []);
 
   const handlePlayAudio = () => {
     if (audioRef.current && !audioPlayed) {
@@ -50,6 +54,11 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    if (isLoading === false) {
+      handlePlayAudio(); 
+    }
+  })
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -162,107 +171,107 @@ export default function Home() {
   };
 
   return (
-    (isLoading) ? (
     <div className="flex items-center justify-center h-screen relative">
-      {/* Black overlay with transparent circular cutout */}
-      <div
-        className="absolute inset-0 bg-black pointer-events-none"
-      ></div>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-screen relative">
+          {/* Black overlay with transparent circular cutout */}
+          <div className="absolute inset-0 bg-black pointer-events-none"></div>
 
-      {/* Loading circle */}
-      <div className="rounded-full"></div>
+          {/* Loading circle */}
+          <div className="rounded-full"></div>
 
-      {/* Gif */}
-      <div className="fixed bottom-0 right-0 w-56 h-56">
-        <img
-          src="./loader.gif"
-          alt="Loading..."
-          className="w-full h-full object-contain"
-        />
-      </div>
-    </div>
-    ) : (
-      <div className="relative">
-        <div
-          className={`fixed inset-0 z-[-1] bg-[url('/background.jpg')] bg-cover bg-center ${
-            !isLoading ? "animate-expansion" : ""
-          }`}
-        ></div>
-
-        <div className="flex items-center justify-center h-screen" onClick={handlePlayAudio}>
-          <Navbar />
-          {/* audio */}
-          <audio ref={audioRef} src="/audio/music.mp3" loop />
-          <audio ref={messageAudioRef} id="message-audio" />
-          {/* SVG filter */}
-          <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
-            <defs>
-              <filter id="fancy-goo">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-                <feColorMatrix
-                  in="blur"
-                  mode="matrix"
-                  values="1 0 0 0 0  
-                          0 1 0 0 0  
-                          0 0 1 0 0  
-                          0 0 0 19 -9"
-                  result="goo"
-                />
-                <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-              </filter>
-            </defs>
-          </svg>
-          {/* speech bubble */}
-          <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
-            <div className="relative w-[100%] flex flex-col items-center justify-stretch animate-pop-up" style={{ filter: "url(#fancy-goo)" }}>
-              <div className="absolute top-2 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_30%_30%/150%_150%_150%_150%] animate-dialogue-top origin-center"></div>
-              <div className="absolute bottom-2 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] animate-dialogue-bottom origin-center"></div>
-              <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.6em] text-[#807256] font-sans font-bold">
-                {typedMessage}
-              </div>
-            </div>
-            <div className="absolute perspective-[2rem] animate-custom-bounce">
-              <div className="inline-block mr-auto px-8 py-3 text-2xl text-[#FFFAE5] bg-[#81A7FF] rounded-[30%/100%_100%_120%_120%] -rotate-[5deg] translate-x-[20%] translate-y-[-30%] font-sans font-semibold">
-                Toby Nook
-              </div>
-            </div>
-            <svg
-              className="absolute bottom-2 left-[50%] translate-x-[-50%] animate-arrow"
-              width="45"
-              height="25"
-              viewBox="0 0 45 25"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M22.5 25C18.0184 25 7.59473 12.6404 1.55317 4.96431C-0.122281 2.83559 1.72264 -0.179893 4.39835 0.243337C10.2831 1.17415 18.2164 2.28736 22.5 2.28736C26.7836 2.28736 34.7169 1.17415 40.6017 0.243339C43.2774 -0.17989 45.1223 2.83559 43.4468 4.96431C37.4053 12.6404 26.9816 25 22.5 25Z"
-                fill="#FEB703"
-              />
-            </svg>
+          {/* Gif */}
+          <div className="fixed bottom-0 right-0 w-56 h-56">
+            <img
+              src="./loader.gif"
+              alt="Loading..."
+              className="w-full h-full object-contain"
+            />
           </div>
-          {/* options */}
-          {optionsVisible && messageIndex === messages.msgs.length - 1 && (
-            <div className="absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]" style={{ filter: "url(#fancy-goo)" }}>
-              <button
-                className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                onClick={handleYesClick}
-              >
-                <span className="relative z-10">Yes!</span>
-                <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-              </button>
+        </div>
+      ) : (
+        <>
+          <div
+            className={`fixed inset-0 z-[-1] bg-[url('/background.jpg')] bg-cover bg-center ${
+              !isLoading ? "animate-expansion" : ""
+            }`}
+          ></div>
+          {isDialogueVisible && (
+            <div className="flex items-center justify-center h-screen">
+              <Navbar />
+              {/* audio */}
+              <audio ref={audioRef} src="/audio/music.mp3" loop />
+              <audio ref={messageAudioRef} id="message-audio" />
+              {/* SVG filter */}
+              <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
+                <defs>
+                  <filter id="fancy-goo">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                    <feColorMatrix
+                      in="blur"
+                      mode="matrix"
+                      values="1 0 0 0 0  
+                              0 1 0 0 0  
+                              0 0 1 0 0  
+                              0 0 0 19 -9"
+                      result="goo"
+                    />
+                    <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+                  </filter>
+                </defs>
+              </svg>
+              {/* speech bubble */}
+              <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
+                <div className="relative w-[100%] flex flex-col items-center justify-stretch animate-pop-up" style={{ filter: "url(#fancy-goo)" }}>
+                  <div className="absolute top-2 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_30%_30%/150%_150%_150%_150%] animate-dialogue-top origin-center"></div>
+                  <div className="absolute bottom-2 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] animate-dialogue-bottom origin-center"></div>
+                  <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.6em] text-[#807256] font-sans font-bold">
+                    {typedMessage}
+                  </div>
+                </div>
+                <div className="absolute perspective-[2rem] animate-custom-bounce">
+                  <div className="inline-block mr-auto px-8 py-3 text-2xl text-[#FFFAE5] bg-[#81A7FF] rounded-[30%/100%_100%_120%_120%] -rotate-[5deg] translate-x-[20%] translate-y-[-30%] font-sans font-semibold">
+                    Toby Nook
+                  </div>
+                </div>
+                <svg
+                  className="absolute bottom-2 left-[50%] translate-x-[-50%] animate-arrow"
+                  width="45"
+                  height="25"
+                  viewBox="0 0 45 25"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M22.5 25C18.0184 25 7.59473 12.6404 1.55317 4.96431C-0.122281 2.83559 1.72264 -0.179893 4.39835 0.243337C10.2831 1.17415 18.2164 2.28736 22.5 2.28736C26.7836 2.28736 34.7169 1.17415 40.6017 0.243339C43.2774 -0.17989 45.1223 2.83559 43.4468 4.96431C37.4053 12.6404 26.9816 25 22.5 25Z"
+                    fill="#FEB703"
+                  />
+                </svg>
+              </div>
+              {/* options */}
+              {optionsVisible && messageIndex === messages.msgs.length - 1 && (
+                <div className="absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]" style={{ filter: "url(#fancy-goo)" }}>
+                  <button
+                    className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+                    onClick={handleYesClick}
+                  >
+                    <span className="relative z-10">Yes!</span>
+                    <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+                  </button>
 
-              <button
-                className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                onClick={handleNoClick}
-              >
-                <span className="relative z-10">Nope.</span>
-                <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-              </button>
+                  <button
+                    className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+                    onClick={handleNoClick}
+                  >
+                    <span className="relative z-10">Nope.</span>
+                    <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
-      </div>
-      </div>
-
-    )
+        </>
+      )}
+    </div>
   );
 }
