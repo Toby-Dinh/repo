@@ -30,13 +30,9 @@ export default {
           '50%': { transform: 'translateY(-5px)' },
         },
         'expansion': {
-          '0%': { transform: 'scale(0)' },
-          '100%': { transform: 'scale(1)' },
+          '0%': { clipPath: 'circle(0% at 50% 50%)' },
+          '100%': { clipPath: 'circle(150% at 50% 50%)' },
         },
-        'expandCircle': {
-          '0%': { transform: 'scale(0)' },
-          '100%': { transform: 'scale(1)' },
-        }
       },
       animation: {
         arrow: 'arrow 0.5s cubic-bezier(0.37, 0, 0.63, 1) 4.5s infinite alternate',
@@ -44,7 +40,7 @@ export default {
         'pop-up': 'pop-up 0.6s ease-out 1s forwards',
         'dialogue-top': 'blob 1.5s cubic-bezier(0.37, 0, 0.63, 1) 0.3s infinite alternate',
         'dialogue-bottom': 'blob 1s infinite alternate cubic-bezier(0.37, 0, 0.63, 1)',
-        'expansion': 'expansion 5s linear infinite'
+        'expansion': 'expansion 5s ease-out forwards',
       },
     },
   },
