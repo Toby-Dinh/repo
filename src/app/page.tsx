@@ -37,15 +37,6 @@ export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const messageAudioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-      setTimeout(() => {
-        setIsDialogueVisible(true);
-      }, 1000);
-    }, 5000);
-  }, []);
-
   const handlePlayAudio = () => {
     if (audioRef.current && !audioPlayed) {
       audioRef.current.volume = 0.2; // Set volume to 20%
@@ -55,15 +46,23 @@ export default function Home() {
   };
 
   useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false); 
+      setTimeout(() => {
+        setIsDialogueVisible(true);
+      }, 1500);
+    }, 5000);
+  }, []);
+
+  useEffect(() => {
     if (isLoading === false) {
-      handlePlayAudio(); 
+      handlePlayAudio();
     }
   })
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
-        handlePlayAudio();
         if (optionsVisible && !isNoClicked) {
           setMessageIndex((prevIndex) => {
             if (prevIndex < messages.msgs.length - 1) {
@@ -222,7 +221,7 @@ export default function Home() {
               </svg>
               {/* speech bubble */}
               <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
-                <div className="relative w-[100%] flex flex-col items-center justify-stretch animate-pop-up" style={{ filter: "url(#fancy-goo)" }}>
+                <div className="animate-pop-up relative w-[100%] flex flex-col items-center justify-stretch" style={{ filter: "url(#fancy-goo)" }}>
                   <div className="absolute top-2 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_30%_30%/150%_150%_150%_150%] animate-dialogue-top origin-center"></div>
                   <div className="absolute bottom-2 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] animate-dialogue-bottom origin-center"></div>
                   <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.6em] text-[#807256] font-sans font-bold">

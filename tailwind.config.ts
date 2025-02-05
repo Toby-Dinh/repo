@@ -14,16 +14,16 @@ export default {
       },
       keyframes: {
         'pop-up': {
-          '0%': { transform: 'scale(0)' },
-          '100%': { transform: 'scale(1)' },
+          '0%': { transform: 'scale(0)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
         },
         'blob': {
           '0%': { transform: 'rotate(0.3deg) scale(1)' },
           '100%': { transform: 'rotate(-0.3deg) scale(0.99)' },
         },
         arrow: {
-          '0%': { transform: 'translateY(10%) translateX(-50%) scale(1)', opacity: '1' },
-          '100%': { transform: 'translateY(60%) translateX(-50%) scale(0.9)', opacity: '1' },
+          '0%': { transform: 'translateY(10%) translateX(-50%) scale(1)' },
+          '100%': { transform: 'translateY(60%) translateX(-50%) scale(0.9)' },
         },
         customBounce: {
           '0%, 100%': { transform: 'translateY(0)' },
@@ -37,7 +37,7 @@ export default {
       animation: {
         arrow: 'arrow 0.5s cubic-bezier(0.37, 0, 0.63, 1) 4.5s infinite alternate',
         'custom-bounce': 'customBounce 1.5s infinite alternate cubic-bezier(0.37, 0, 0.63, 1)',
-        'pop-up': 'pop-up 0.6s ease-out 1s forwards',
+        'pop-up': 'pop-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1 normal forwards',
         'dialogue-top': 'blob 1.5s cubic-bezier(0.37, 0, 0.63, 1) 0.3s infinite alternate',
         'dialogue-bottom': 'blob 1s infinite alternate cubic-bezier(0.37, 0, 0.63, 1)',
         'expansion': 'expansion 1.8s ease-out forwards',
