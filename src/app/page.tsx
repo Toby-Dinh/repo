@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import Navbar from "./navbar";
 
+// Starting Screen
+// 3D Model
+
 export default function Home() {
   const messages = {
     msgs: [
