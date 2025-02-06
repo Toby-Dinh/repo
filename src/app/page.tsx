@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Navbar from "./navbar";
 import Welcome from "./welcome";
 import Loading from "./loading";
 
@@ -193,8 +192,7 @@ export default function Home() {
             ></div>
             {isDialogueVisible && (
               <div className="flex items-center justify-center h-screen">
-                <Navbar />
-                <img src="tom-nook.gif" className="scale-150" />
+                <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" />
                 {/* audio */}
                 <audio ref={audioRef} src="/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
@@ -217,7 +215,7 @@ export default function Home() {
                   </defs>
                 </svg>
                 {/* speech bubble */}
-                <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-96">
+                <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-[25rem]">
                   <div className="animate-pop-up relative w-[100%] flex flex-col items-center justify-stretch" style={{ filter: "url(#fancy-goo)" }}>
                     <div className="absolute top-2 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_30%_30%/150%_150%_150%_150%] animate-dialogue-top origin-center"></div>
                     <div className="absolute bottom-2 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] animate-dialogue-bottom origin-center"></div>
