@@ -61,10 +61,10 @@ export default function Home() {
   }, [isWelcome]);
 
   useEffect(() => {
-    if (isLoading === false && !isWelcome) {
+    if (isLoading === false) {
       handlePlayAudio();
     }
-  }, [isLoading, isWelcome]);
+  });
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
