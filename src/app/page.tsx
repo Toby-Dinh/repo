@@ -194,6 +194,7 @@ export default function Home() {
             {isDialogueVisible && (
               <div className="flex items-center justify-center h-screen">
                 <Navbar />
+                <img src="tom-nook.gif" className="scale-150" />
                 {/* audio */}
                 <audio ref={audioRef} src="/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
