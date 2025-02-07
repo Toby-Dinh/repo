@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Welcome from "./welcome";
-import Loading from "./loading";
 
 export default function Home() {
   const messages = {
@@ -34,6 +33,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isWelcome, setIsWelcome] = useState(true);
   const [isDialogueVisible, setIsDialogueVisible] = useState(false);
+  const [zoomInAnimation, setZoomInAnimation] = useState<string>('');
   const typingSpeed = 68; // Adjust typing speed here
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -65,34 +65,39 @@ export default function Home() {
     }
   });
 
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
-        if (isWelcome) {
-          setIsWelcome(false);
-        } else if (optionsVisible && !isNoClicked) {
-          setMessageIndex((prevIndex) => {
-            if (prevIndex < messages.msgs.length - 1) {
-              return prevIndex + 1;
-            } else {
-              return prevIndex;
-            }
-          });
-        } else if (isNoClicked) {
-          setNoMessageIndex((prevIndex) => {
-            const newIndex = (prevIndex + 1) % messages.no_msgs.length;
-            setDisplayMessage(messages.no_msgs[newIndex]);
-            return newIndex;
-          });
-        }
+        setZoomInAnimation('animate-zoomIn')
       }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
+    }
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
+  }, []);
+
+  useEffect(() => {
+    if (zoomInAnimation === "animate-zoomIn") {
+      setTimeout(() => {
+        setIsWelcome(false);
+      }, 2000)
+    } else if (optionsVisible && !isNoClicked) {
+      setMessageIndex((prevIndex) => {
+        if (prevIndex < messages.msgs.length - 1) {
+          return prevIndex + 1;
+        } else {
+          return prevIndex;
+        }
+      });
+    } else if (isNoClicked) {
+      setNoMessageIndex((prevIndex) => {
+        const newIndex = (prevIndex + 1) % messages.no_msgs.length;
+        setDisplayMessage(messages.no_msgs[newIndex]);
+        return newIndex;
+      });
+    }
   }, [messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, audioPlayed, isWelcome]);
 
   useEffect(() => {
@@ -179,10 +184,27 @@ export default function Home() {
   return (
     <div className="flex items-center justify-center h-screen relative">
       {isWelcome ? (
-        <Welcome />
+        <div className={`h-screen w-full bg-[url('/background.jpg')] bg-cover bg-center ${zoomInAnimation}`}>
+          <div className="-mt-24 flex flex-col items-center">
+            <img src="./Logo.webp" className="scale-50" alt="Logo" />
+            <div className="text-white text-3xl mt-36">
+              Press Space
+            </div>
+          </div>
+          <audio ref={audioRef} src="/audio/mainTheme.mp3" loop />
+        </div>
       ) : (
         isLoading ? (
-          <Loading />
+          <div className={`flex items-center justify-center h-screen relative`}>
+              {/* Gif */}
+              <div className="fixed bottom-0 right-0 w-56 h-56">
+              <img
+                  src="./loader.gif"
+                  alt="Loading..."
+                  className="w-full h-full object-contain"
+              />
+              </div>
+          </div>
         ) : (
           <>
             <div
@@ -249,7 +271,17 @@ export default function Home() {
                       className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
                       onClick={handleYesClick}
                     >
+                      <div>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 -mt-4 rounded-md transform rotate-45"></span>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 mt-4 rounded-md transform -rotate-45"></span>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 rounded-md"></span>
+                      </div>
                       <span className="relative z-10">Yes!</span>
+                      <div>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 -mt-4 rounded-md transform -rotate-45"></span>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 mt-4 rounded-md transform rotate-45"></span>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 rounded-md"></span>
+                      </div>
                       <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
                     </button>
   

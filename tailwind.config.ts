@@ -33,6 +33,10 @@ export default {
           '0%': { clipPath: 'circle(0% at 50% 50%)' },
           '100%': { clipPath: 'circle(150% at 50% 50%)' },
         },
+        'zoomIn': {
+          '0%': { clipPath: 'circle(150% at 50% 50%)' },
+          '100%': { clipPath: 'circle(0% at 50% 50%)' },
+        }
       },
       animation: {
         arrow: 'arrow 0.5s cubic-bezier(0.37, 0, 0.63, 1) 4.5s infinite alternate',
@@ -41,6 +45,7 @@ export default {
         'dialogue-top': 'blob 1.5s cubic-bezier(0.37, 0, 0.63, 1) 0.3s infinite alternate',
         'dialogue-bottom': 'blob 1s infinite alternate cubic-bezier(0.37, 0, 0.63, 1)',
         'expansion': 'expansion 1.8s ease-out forwards',
+        'zoomIn': 'zoomIn 1.8s ease-out forwards',
       },
     },
   },
