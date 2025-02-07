@@ -48,7 +48,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (!isWelcome) {
+    if (isWelcome === false) {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
@@ -71,7 +71,7 @@ export default function Home() {
       if (event.code === "Space") {
         setZoomInAnimation('animate-zoomIn')
       }
-    }
+    };
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -82,7 +82,7 @@ export default function Home() {
     if (zoomInAnimation === "animate-zoomIn") {
       setTimeout(() => {
         setIsWelcome(false);
-      }, 2000)
+      }, 2000);
     } else if (optionsVisible && !isNoClicked) {
       setMessageIndex((prevIndex) => {
         if (prevIndex < messages.msgs.length - 1) {
@@ -98,7 +98,7 @@ export default function Home() {
         return newIndex;
       });
     }
-  }, [messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, audioPlayed, isWelcome]);
+  }, [zoomInAnimation, messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, audioPlayed, isWelcome]);
 
   useEffect(() => {
     if (optionsVisible && !isNoClicked) {
