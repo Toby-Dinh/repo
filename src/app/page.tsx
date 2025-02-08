@@ -121,7 +121,6 @@ export default function Home() {
               return prevIndex;
             }
           });
-          // yip
         } else if (isNoClicked) {
           setNoMessageIndex((prevIndex) => {
             const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -135,7 +134,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("keydown", handleSpace);
     }
-  }, [zoomInAnimation, messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, audioPlayed, isWelcome]);
+  }, [zoomInAnimation, messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, audioPlayed, isWelcome, isLoading]);
 
   useEffect(() => {
     if (optionsVisible && !isNoClicked) {
@@ -145,6 +144,8 @@ export default function Home() {
 
   // Typing Effect
   useEffect(() => {
+    if (!isDialogueVisible) return;
+
     let currentCharIndex = 0;
     let timeoutId: NodeJS.Timeout;
 
@@ -183,7 +184,7 @@ export default function Home() {
     return () => {
       clearTimeout(timeoutId); 
     };
-  }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked]);
+  }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
 
   useEffect(() => {
     if (!optionsVisible || isNoClicked || isYesClicked) {
