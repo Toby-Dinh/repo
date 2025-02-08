@@ -149,6 +149,8 @@ export default function Home() {
     let currentCharIndex = 0;
     let timeoutId: NodeJS.Timeout;
 
+    setTypedMessage(""); 
+
     const typeMessage = () => {
       if (currentCharIndex <= displayMessage.length) {
         setTypedMessage(displayMessage.slice(0, currentCharIndex));
@@ -157,15 +159,14 @@ export default function Home() {
       }
     };
 
-    setTypedMessage(""); 
     typeMessage();
   
     if (messageAudioRef.current) {
       let audioSrc = "";
     
-      if (isNoClicked === true) {
+      if (isNoClicked) {
         audioSrc = `/audio/noMsg${noMessageIndex + 1}.wav`;
-      } else if (isYesClicked === true) {
+      } else if (isYesClicked) {
         audioSrc = "/audio/yesMsg.wav";
       } else {
         audioSrc = `/audio/msg${messageIndex + 1}.wav`;
