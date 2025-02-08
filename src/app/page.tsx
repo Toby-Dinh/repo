@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Welcome from "./welcome";
 
 export default function Home() {
   const messages = {
@@ -36,16 +35,29 @@ export default function Home() {
   const [zoomInAnimation, setZoomInAnimation] = useState<string>('');
   const typingSpeed = 68; // Adjust typing speed here
 
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const musicAudioRef = useRef<HTMLAudioElement>(null); 
+  const mainThemeAudioRef = useRef<HTMLAudioElement>(null); 
   const messageAudioRef = useRef<HTMLAudioElement>(null);
 
-  const handlePlayAudio = () => {
-    if (audioRef.current && !audioPlayed) {
-      audioRef.current.volume = 0.2; // Set volume to 20%
-      audioRef.current.play();
-      setAudioPlayed(true);
+  useEffect(() => {
+    const handlePlayMainTheme = () => {
+      if (mainThemeAudioRef.current && !audioPlayed) {
+        mainThemeAudioRef.current.volume = 0.2;
+        mainThemeAudioRef.current.play()
+        setAudioPlayed(true);
+      }
     }
-  };
+    handlePlayMainTheme();
+  })
+
+  useEffect(() => {
+    if (isDialogueVisible && musicAudioRef.current) {
+      musicAudioRef.current.volume = 0.2; // Set volume to 20%
+      musicAudioRef.current.play().catch((error) => {
+        console.error("Failed to play background music:", error);
+      });
+    }
+  }, [isDialogueVisible]);
 
   useEffect(() => {
     if (isWelcome === false) {
@@ -59,11 +71,6 @@ export default function Home() {
     }
   }, [isWelcome]);
 
-  useEffect(() => {
-    if (isLoading === false) {
-      handlePlayAudio();
-    }
-  });
 
 
   useEffect(() => {
@@ -83,20 +90,30 @@ export default function Home() {
       setTimeout(() => {
         setIsWelcome(false);
       }, 2000);
-    } else if (optionsVisible && !isNoClicked) {
-      setMessageIndex((prevIndex) => {
-        if (prevIndex < messages.msgs.length - 1) {
-          return prevIndex + 1;
-        } else {
-          return prevIndex;
-        }
-      });
-    } else if (isNoClicked) {
-      setNoMessageIndex((prevIndex) => {
-        const newIndex = (prevIndex + 1) % messages.no_msgs.length;
-        setDisplayMessage(messages.no_msgs[newIndex]);
-        return newIndex;
-      });
+    } 
+    
+    const handleSpace = (event: KeyboardEvent) => {
+      if (event.code === "Space") {
+        if (optionsVisible && !isNoClicked) {
+          setMessageIndex((prevIndex) => {
+            if (prevIndex < messages.msgs.length - 1) {
+              return prevIndex + 1;
+            } else {
+              return prevIndex;
+            }
+          });
+        } else if (isNoClicked) {
+          setNoMessageIndex((prevIndex) => {
+            const newIndex = (prevIndex + 1) % messages.no_msgs.length;
+            setDisplayMessage(messages.no_msgs[newIndex]);
+            return newIndex;
+          });
+        };
+      }
+    }
+    window.addEventListener("keydown", handleSpace);
+    return () => {
+      window.removeEventListener("keydown", handleSpace);
     }
   }, [zoomInAnimation, messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, audioPlayed, isWelcome]);
 
@@ -191,7 +208,7 @@ export default function Home() {
               Press Space
             </div>
           </div>
-          <audio ref={audioRef} src="/audio/mainTheme.mp3" loop />
+          <audio ref={mainThemeAudioRef} src="/audio/mainTheme.mp3" loop />
         </div>
       ) : (
         isLoading ? (
@@ -216,7 +233,7 @@ export default function Home() {
               <div className="flex items-center justify-center h-screen">
                 <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" />
                 {/* audio */}
-                <audio ref={audioRef} src="/audio/music.mp3" loop />
+                <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
                 {/* SVG filter */}
                 <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
