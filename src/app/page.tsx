@@ -38,6 +38,11 @@ export default function Home() {
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
   const mainThemeAudioRef = useRef<HTMLAudioElement>(null); 
   const messageAudioRef = useRef<HTMLAudioElement>(null);
+  const soundEffectAudioRef = useRef<HTMLAudioElement>(null);
+  const soundEffect2AudioRef = useRef<HTMLAudioElement>(null);
+  const soundEffect3AudioRef = useRef<HTMLAudioElement>(null);
+  const soundEffect4AudioRef = useRef<HTMLAudioElement>(null);
+
 
   useEffect(() => {
     const handlePlayMainTheme = () => {
@@ -77,6 +82,12 @@ export default function Home() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
         setZoomInAnimation('animate-zoomIn')
+        if (soundEffectAudioRef.current) {
+          soundEffectAudioRef.current.currentTime = 0; // Reset playback position
+          soundEffectAudioRef.current.play().catch((error) => {
+            console.error("Failed to play sound effect:", error);
+          });
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -95,6 +106,12 @@ export default function Home() {
     const handleSpace = (event: KeyboardEvent) => {
       if (event.code === "Space") {
         if (optionsVisible && !isNoClicked) {
+          if (soundEffect2AudioRef.current) {
+            soundEffect2AudioRef.current.currentTime = 0; // Reset playback position
+            soundEffect2AudioRef.current.play().catch((error) => {
+              console.error("Failed to play sound effect:", error);
+            });
+          }
           setMessageIndex((prevIndex) => {
             if (prevIndex < messages.msgs.length - 1) {
               return prevIndex + 1;
@@ -102,6 +119,7 @@ export default function Home() {
               return prevIndex;
             }
           });
+          // yip
         } else if (isNoClicked) {
           setNoMessageIndex((prevIndex) => {
             const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -138,21 +156,28 @@ export default function Home() {
 
     setTypedMessage(""); 
     typeMessage();
-
+  
     if (messageAudioRef.current) {
+      let audioSrc = "";
+    
       if (isNoClicked === true) {
-        messageAudioRef.current.src = `/audio/noMsg${noMessageIndex + 1}.wav`;
+        audioSrc = `/audio/noMsg${noMessageIndex + 1}.wav`;
       } else if (isYesClicked === true) {
-        messageAudioRef.current.src = "/audio/yesMsg.wav";
+        audioSrc = "/audio/yesMsg.wav";
+      } else {
+        audioSrc = `/audio/msg${messageIndex + 1}.wav`;
       }
-      else {
-        messageAudioRef.current.src = `/audio/msg${messageIndex + 1}.wav`;
-      }
-      messageAudioRef.current.play().catch((error) => {
-        console.error("Failed to play message audio:", error);
-      });
+    
+      messageAudioRef.current.src = audioSrc;
+    
+      setTimeout(() => {
+        messageAudioRef.current && messageAudioRef.current
+          .play()
+          .catch((error) => {
+            console.error("Failed to play message audio:", error);
+          });
+      }, 250); // 1-second delay
     }
-
     return () => {
       clearTimeout(timeoutId); 
     };
@@ -172,7 +197,9 @@ export default function Home() {
         }
       };
 
-      typeMessage();
+      timeoutId = setTimeout(() => {
+        typeMessage();
+      }, 500);
 
       return () => {
         clearTimeout(timeoutId);
@@ -181,6 +208,12 @@ export default function Home() {
   }, [displayMessage, optionsVisible, isNoClicked, isYesClicked]);
 
   const handleYesClick = () => {
+    if (soundEffect3AudioRef.current) {
+      soundEffect3AudioRef.current.currentTime = 0;
+      soundEffect3AudioRef.current.play().catch((error) => {
+        console.error("Failed to play sound effect:", error);
+      });
+    }
     setTypedMessage(""); // Clear typed message before setting new display message
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
@@ -189,6 +222,12 @@ export default function Home() {
   };
 
   const handleNoClick = () => {
+    if (soundEffect3AudioRef.current) {
+      soundEffect3AudioRef.current.currentTime = 0;
+      soundEffect3AudioRef.current.play().catch((error) => {
+        console.error("Failed to play sound effect:", error);
+      });
+    }
     setTypedMessage(""); // Clear typed message before setting new display message
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -204,11 +243,12 @@ export default function Home() {
         <div className={`h-screen w-full bg-[url('/background.jpg')] bg-cover bg-center ${zoomInAnimation}`}>
           <div className="-mt-24 flex flex-col items-center">
             <img src="./Logo.webp" className="scale-50" alt="Logo" />
-            <div className="text-white text-3xl mt-36">
+            <div className="text-white text-3xl mt-36" style={{ fontFamily: 'system-font' }}>
               Press Space
             </div>
           </div>
           <audio ref={mainThemeAudioRef} src="/audio/mainTheme.mp3" loop />
+          <audio ref={soundEffectAudioRef} src="/audio/soundEffects/sound-effect.wav" />
         </div>
       ) : (
         isLoading ? (
@@ -235,6 +275,8 @@ export default function Home() {
                 {/* audio */}
                 <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
+                <audio ref={soundEffect2AudioRef} src="/audio/soundEffects/sound-effect2.wav" />
+                <audio ref={soundEffect3AudioRef} src="/audio/soundEffects/sound-effect3.wav" />
                 {/* SVG filter */}
                 <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
                   <defs>
