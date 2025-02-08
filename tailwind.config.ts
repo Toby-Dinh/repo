@@ -21,6 +21,10 @@ export default {
           '0%': { transform: 'rotate(0.3deg) scale(1)' },
           '100%': { transform: 'rotate(-0.3deg) scale(0.99)' },
         },
+        'options': {
+          '0%': { transform: 'rotate(0.3deg) scale(1)' },
+          '100%': { transform: 'rotate(-0.3deg) scale(0.96)' },
+        },
         arrow: {
           '0%': { transform: 'translateY(10%) translateX(-50%) scale(1)' },
           '100%': { transform: 'translateY(60%) translateX(-50%) scale(0.9)' },
@@ -44,6 +48,7 @@ export default {
         'pop-up': 'pop-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1 normal forwards',
         'dialogue-top': 'blob 1.5s cubic-bezier(0.37, 0, 0.63, 1) 0.3s infinite alternate',
         'dialogue-bottom': 'blob 1s infinite alternate cubic-bezier(0.37, 0, 0.63, 1)',
+        'option': 'options 1s infinite alternate cubic-bezier(0.37, 0, 0.63, 1)',
         'expansion': 'expansion 1.8s ease-out forwards',
         'zoomIn': 'zoomIn 1.8s ease-out forwards',
       },
