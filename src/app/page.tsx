@@ -33,7 +33,7 @@ export default function Home() {
   const [isWelcome, setIsWelcome] = useState(true);
   const [isDialogueVisible, setIsDialogueVisible] = useState(false);
   const [zoomInAnimation, setZoomInAnimation] = useState<string>('');
-  const typingSpeed = 68; // Adjust typing speed here
+  const typingSpeed = 75; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
   const mainThemeAudioRef = useRef<HTMLAudioElement>(null); 
@@ -80,10 +80,10 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "KeyA") {
+      if (event.code === "Space") {
         setTimeout(() => {
           setZoomInAnimation('animate-zoomIn')
-        }, 1000);
+        }, 800);
         if (soundEffectAudioRef.current) {
           soundEffectAudioRef.current.currentTime = 0; // Reset playback position
           soundEffectAudioRef.current.play().catch((error) => {
@@ -106,7 +106,7 @@ export default function Home() {
     } 
     
     const handleSpace = (event: KeyboardEvent) => {
-      if (event.code === "Space") {
+      if (!isWelcome && !isLoading && event.code === "Space") {
         if (optionsVisible && !isNoClicked) {
           if (soundEffect2AudioRef.current) {
             soundEffect2AudioRef.current.currentTime = 0; // Reset playback position
@@ -267,13 +267,18 @@ export default function Home() {
         ) : (
           <>
             <div
-              className={`fixed inset-0 z-[-1] bg-[url('/background.jpg')] bg-cover bg-center ${
+              className={`fixed inset-0 z-[-1] ${
                 !isLoading ? "animate-expansion" : ""
               }`}
-            ></div>
+            >
+              <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
+                <source src="/background.mov" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
             {isDialogueVisible && (
               <div className="flex items-center justify-center h-screen">
-                <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" />
+                {/* <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" /> */}
                 {/* audio */}
                 <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
