@@ -80,8 +80,10 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "Space") {
-        setZoomInAnimation('animate-zoomIn')
+      if (event.code === "KeyA") {
+        setTimeout(() => {
+          setZoomInAnimation('animate-zoomIn')
+        }, 1000);
         if (soundEffectAudioRef.current) {
           soundEffectAudioRef.current.currentTime = 0; // Reset playback position
           soundEffectAudioRef.current.play().catch((error) => {
