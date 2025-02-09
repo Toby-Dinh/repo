@@ -151,7 +151,9 @@ export default function Home() {
         timeoutId = setTimeout(typeMessage, typingSpeed);
       } else {
         setIsTypingComplete(true);
-        console.log(isTypingComplete);
+        if (isNoClicked || messageIndex === messages.msgs.length - 1) {
+          setOptionsVisible(true);
+        }
       }
     };
 
@@ -180,23 +182,6 @@ export default function Home() {
       clearTimeout(timeoutId); 
     };
   }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
-
-  // useEffect(() => {
-  //   if (!optionsVisible || isNoClicked || isYesClicked) {
-  //     setTypedMessage("");
-  //     let currentCharIndex = 0;
-  
-  //     const typeMessage = () => {
-  //       if (currentCharIndex <= displayMessage.length) {
-  //         setTypedMessage(displayMessage.slice(0, currentCharIndex));
-  //         currentCharIndex++;
-  //         setTimeout(typeMessage, typingSpeed);
-  //       }
-  //     };
-  
-  //     typeMessage();
-  //   }
-  // }, [displayMessage, optionsVisible, isNoClicked, isYesClicked]);
 
   const playSoundEffect = () => {
     soundEffect3AudioRef.current?.play().catch((error) => {
@@ -229,13 +214,13 @@ export default function Home() {
   };
 
   // Hook to set options to visible if and only if typing has been completed and it is the last message or if it is on the no msgs
-  useEffect(() => {
-    if (isTypingComplete) {
-      if (messageIndex === messages.msgs.length - 1 || isNoClicked) {
-        setOptionsVisible(true);
-      }
-    }
-  }, [isNoClicked, isTypingComplete, messageIndex, messages.msgs.length]);
+  // useEffect(() => {
+  //   if (isTypingComplete) {
+  //     if (messageIndex === messages.msgs.length - 1 || isNoClicked) {
+  //       setOptionsVisible(true);
+  //     }
+  //   }
+  // }, [isNoClicked, isTypingComplete, messageIndex, messages.msgs.length]);
 
   return (
     <div className="flex items-center justify-center h-screen relative">
