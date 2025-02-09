@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Home() {
   const messages = {
@@ -33,16 +33,11 @@ export default function Home() {
   const [isWelcome, setIsWelcome] = useState(true);
   const [isDialogueVisible, setIsDialogueVisible] = useState(false);
   const [zoomInAnimation, setZoomInAnimation] = useState<string>('');
-  const typingSpeed = 75; // Adjust typing speed here
+  const typingSpeed = 68; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
   const mainThemeAudioRef = useRef<HTMLAudioElement>(null); 
   const messageAudioRef = useRef<HTMLAudioElement>(null);
-  const soundEffectAudioRef = useRef<HTMLAudioElement>(null);
-  const soundEffect2AudioRef = useRef<HTMLAudioElement>(null);
-  const soundEffect3AudioRef = useRef<HTMLAudioElement>(null);
-  const soundEffect4AudioRef = useRef<HTMLAudioElement>(null);
-
 
   useEffect(() => {
     const handlePlayMainTheme = () => {
@@ -76,22 +71,12 @@ export default function Home() {
     }
   }, [isWelcome]);
 
-  // Space to enter the loading page 
+
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
-        setTimeout(() => {
-          setZoomInAnimation('animate-zoomIn')
-          setTimeout(() => {
-            setIsWelcome(false);
-          }, 2000);
-        }, 500);
-        if (soundEffectAudioRef.current) {
-          soundEffectAudioRef.current.currentTime = 0; // Reset playback position
-          soundEffectAudioRef.current.play().catch((error) => {
-            console.error("Failed to play sound effect:", error);
-          });
-        }
+        setZoomInAnimation('animate-zoomIn')
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -100,31 +85,37 @@ export default function Home() {
     };
   }, []);
 
-  // Hook to go to the next message
   useEffect(() => {
+    if (zoomInAnimation === "animate-zoomIn") {
+      setTimeout(() => {
+        setIsWelcome(false);
+      }, 2000);
+    } 
+    
     const handleSpace = (event: KeyboardEvent) => {
-      if (event.code !== "Space" || isWelcome || isLoading) return;
-  
-      if (optionsVisible && !isNoClicked) {
-        soundEffect2AudioRef.current?.play().catch((error) =>
-          console.error("Failed to play sound effect:", error)
-        );
-  
-        setMessageIndex((prevIndex) =>
-          Math.min(prevIndex + 1, messages.msgs.length - 1)
-        );
-      } else if (isNoClicked) {
-        setNoMessageIndex((prevIndex) => {
-          const newIndex = (prevIndex + 1) % messages.no_msgs.length;
-          setDisplayMessage(messages.no_msgs[newIndex]);
-          return newIndex;
-        });
+      if (event.code === "Space") {
+        if (optionsVisible && !isNoClicked) {
+          setMessageIndex((prevIndex) => {
+            if (prevIndex < messages.msgs.length - 1) {
+              return prevIndex + 1;
+            } else {
+              return prevIndex;
+            }
+          });
+        } else if (isNoClicked) {
+          setNoMessageIndex((prevIndex) => {
+            const newIndex = (prevIndex + 1) % messages.no_msgs.length;
+            setDisplayMessage(messages.no_msgs[newIndex]);
+            return newIndex;
+          });
+        };
       }
-    };
-  
+    }
     window.addEventListener("keydown", handleSpace);
-    return () => window.removeEventListener("keydown", handleSpace);
-  }, [messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, isWelcome, isLoading]);
+    return () => {
+      window.removeEventListener("keydown", handleSpace);
+    }
+  }, [zoomInAnimation, messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, audioPlayed, isWelcome]);
 
   useEffect(() => {
     if (optionsVisible && !isNoClicked) {
@@ -134,12 +125,8 @@ export default function Home() {
 
   // Typing Effect
   useEffect(() => {
-    if (!isDialogueVisible) return;
-
     let currentCharIndex = 0;
     let timeoutId: NodeJS.Timeout;
-
-    setTypedMessage(""); 
 
     const typeMessage = () => {
       if (currentCharIndex <= displayMessage.length) {
@@ -149,78 +136,66 @@ export default function Home() {
       }
     };
 
+    setTypedMessage(""); 
     typeMessage();
-  
+
     if (messageAudioRef.current) {
-      let audioSrc = "";
-    
-      if (isNoClicked) {
-        audioSrc = `/audio/noMsg${noMessageIndex + 1}.wav`;
-      } else if (isYesClicked) {
-        audioSrc = "/audio/yesMsg.wav";
-      } else {
-        audioSrc = `/audio/msg${messageIndex + 1}.wav`;
+      if (isNoClicked === true) {
+        messageAudioRef.current.src = `/audio/noMsg${noMessageIndex + 1}.wav`;
+      } else if (isYesClicked === true) {
+        messageAudioRef.current.src = "/audio/yesMsg.wav";
       }
-    
-      messageAudioRef.current.src = audioSrc;
-    
-      setTimeout(() => {
-        messageAudioRef.current && messageAudioRef.current
-          .play()
-          .catch((error) => {
-            console.error("Failed to play message audio:", error);
-          });
-      }, 250); // 1-second delay
+      else {
+        messageAudioRef.current.src = `/audio/msg${messageIndex + 1}.wav`;
+      }
+      messageAudioRef.current.play().catch((error) => {
+        console.error("Failed to play message audio:", error);
+      });
     }
+
     return () => {
       clearTimeout(timeoutId); 
     };
-  }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
+  }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked]);
 
   useEffect(() => {
     if (!optionsVisible || isNoClicked || isYesClicked) {
       setTypedMessage("");
       let currentCharIndex = 0;
-  
+      let timeoutId: NodeJS.Timeout;
+
       const typeMessage = () => {
         if (currentCharIndex <= displayMessage.length) {
           setTypedMessage(displayMessage.slice(0, currentCharIndex));
           currentCharIndex++;
-          setTimeout(typeMessage, typingSpeed);
+          timeoutId = setTimeout(typeMessage, typingSpeed);
         }
       };
-  
+
       typeMessage();
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
   }, [displayMessage, optionsVisible, isNoClicked, isYesClicked]);
 
-  const playSoundEffect = () => {
-    soundEffect3AudioRef.current?.play().catch((error) => {
-      console.error("Failed to play sound effect:", error);
-    });
-    if (soundEffect3AudioRef.current) {
-      soundEffect3AudioRef.current.currentTime = 0;
-    }
-  };
-  
   const handleYesClick = () => {
-    setTypedMessage("");
+    setTypedMessage(""); // Clear typed message before setting new display message
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
     setIsNoClicked(false);
     setIsYesClicked(true);
-    playSoundEffect();
   };
-  
+
   const handleNoClick = () => {
-    setTypedMessage("");
+    setTypedMessage(""); // Clear typed message before setting new display message
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
       setDisplayMessage(messages.no_msgs[newIndex]);
       return newIndex;
     });
     setIsNoClicked(true);
-    playSoundEffect();
   };
 
   return (
@@ -229,12 +204,11 @@ export default function Home() {
         <div className={`h-screen w-full bg-[url('/background.jpg')] bg-cover bg-center ${zoomInAnimation}`}>
           <div className="-mt-24 flex flex-col items-center">
             <img src="./Logo.webp" className="scale-50" alt="Logo" />
-            <div className="text-white text-3xl mt-36" style={{ fontFamily: 'system-font' }}>
+            <div className="text-white text-3xl mt-36">
               Press Space
             </div>
           </div>
           <audio ref={mainThemeAudioRef} src="/audio/mainTheme.mp3" loop />
-          <audio ref={soundEffectAudioRef} src="/audio/soundEffects/sound-effect.wav" />
         </div>
       ) : (
         isLoading ? (
@@ -251,23 +225,16 @@ export default function Home() {
         ) : (
           <>
             <div
-              className={`fixed inset-0 z-[-1] ${
+              className={`fixed inset-0 z-[-1] bg-[url('/background.jpg')] bg-cover bg-center ${
                 !isLoading ? "animate-expansion" : ""
               }`}
-            >
-              <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
-                <source src="/background.mov" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
+            ></div>
             {isDialogueVisible && (
               <div className="flex items-center justify-center h-screen">
-                {/* <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" /> */}
+                <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" />
                 {/* audio */}
                 <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
-                <audio ref={soundEffect2AudioRef} src="/audio/soundEffects/sound-effect2.wav" />
-                <audio ref={soundEffect3AudioRef} src="/audio/soundEffects/sound-effect3.wav" />
                 {/* SVG filter */}
                 <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
                   <defs>
@@ -321,7 +288,17 @@ export default function Home() {
                       className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
                       onClick={handleYesClick}
                     >
+                      <div>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 -mt-4 rounded-md transform rotate-45"></span>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 mt-4 rounded-md transform -rotate-45"></span>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 rounded-md"></span>
+                      </div>
                       <span className="relative z-10">Yes!</span>
+                      <div>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 -mt-4 rounded-md transform -rotate-45"></span>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 mt-4 rounded-md transform rotate-45"></span>
+                        <span className="absolute bg-[#ffcf00] w-3 h-1 rounded-md"></span>
+                      </div>
                       <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
                     </button>
   
