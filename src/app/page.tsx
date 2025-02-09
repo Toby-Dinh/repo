@@ -54,7 +54,7 @@ export default function Home() {
       }
     }
     handlePlayMainTheme();
-  })
+  }, [audioPlayed])
 
   useEffect(() => {
     if (isDialogueVisible && musicAudioRef.current) {
@@ -106,14 +106,14 @@ export default function Home() {
     const handleSpace = (event: KeyboardEvent) => {
       if (event.code !== "Space" || isWelcome || isLoading) return;
   
-      if (optionsVisible && !isNoClicked) {
-        soundEffect2AudioRef.current?.play().catch((error) =>
-          console.error("Failed to play sound effect:", error)
-        );
-  
-        setMessageIndex((prevIndex) =>
-          Math.min(prevIndex + 1, messages.msgs.length - 1)
-        );
+      if (!optionsVisible && !isNoClicked) {
+        if (messageIndex < messages.msgs.length - 1) {
+          soundEffect2AudioRef.current?.play().catch((error) =>
+            console.error("Failed to play sound effect:", error)
+          );
+          setMessageIndex((prevIndex) => prevIndex + 1);
+        }
+        
       } else if (isNoClicked) {
         setNoMessageIndex((prevIndex) => {
           const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -122,16 +122,17 @@ export default function Home() {
         });
       }
     };
-  
+
     window.addEventListener("keydown", handleSpace);
     return () => window.removeEventListener("keydown", handleSpace);
-  }, [messages.msgs.length, messages.no_msgs.length, optionsVisible, isNoClicked, isWelcome, isLoading]);
+
+  }, [messages.msgs.length, messageIndex, messages.no_msgs.length, optionsVisible, isNoClicked, isWelcome, isLoading]);
 
   useEffect(() => {
-    if (optionsVisible && !isNoClicked) {
+    if (!isYesClicked && !isNoClicked) {
       setDisplayMessage(messages.msgs[messageIndex]);
     }
-  }, [messageIndex, messages.msgs, optionsVisible, isNoClicked]);
+  }, [messageIndex, messages.msgs, isYesClicked, isNoClicked]);
 
   // Typing Effect
   useEffect(() => {
@@ -141,6 +142,7 @@ export default function Home() {
     let timeoutId: NodeJS.Timeout;
 
     setTypedMessage(""); 
+    setIsTypingComplete(false);
 
     const typeMessage = () => {
       if (currentCharIndex <= displayMessage.length) {
@@ -156,7 +158,6 @@ export default function Home() {
   
     if (messageAudioRef.current) {
       let audioSrc = "";
-    
       if (isNoClicked) {
         audioSrc = `/audio/noMsg${noMessageIndex + 1}.wav`;
       } else if (isYesClicked) {
@@ -164,7 +165,6 @@ export default function Home() {
       } else {
         audioSrc = `/audio/msg${messageIndex + 1}.wav`;
       }
-    
       messageAudioRef.current.src = audioSrc;
     
       setTimeout(() => {
@@ -180,22 +180,22 @@ export default function Home() {
     };
   }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
 
-  useEffect(() => {
-    if (!optionsVisible || isNoClicked || isYesClicked) {
-      setTypedMessage("");
-      let currentCharIndex = 0;
+  // useEffect(() => {
+  //   if (!optionsVisible || isNoClicked || isYesClicked) {
+  //     setTypedMessage("");
+  //     let currentCharIndex = 0;
   
-      const typeMessage = () => {
-        if (currentCharIndex <= displayMessage.length) {
-          setTypedMessage(displayMessage.slice(0, currentCharIndex));
-          currentCharIndex++;
-          setTimeout(typeMessage, typingSpeed);
-        }
-      };
+  //     const typeMessage = () => {
+  //       if (currentCharIndex <= displayMessage.length) {
+  //         setTypedMessage(displayMessage.slice(0, currentCharIndex));
+  //         currentCharIndex++;
+  //         setTimeout(typeMessage, typingSpeed);
+  //       }
+  //     };
   
-      typeMessage();
-    }
-  }, [displayMessage, optionsVisible, isNoClicked, isYesClicked]);
+  //     typeMessage();
+  //   }
+  // }, [displayMessage, optionsVisible, isNoClicked, isYesClicked]);
 
   const playSoundEffect = () => {
     soundEffect3AudioRef.current?.play().catch((error) => {
@@ -227,6 +227,7 @@ export default function Home() {
     playSoundEffect();
   };
 
+  // Hook to set options to visible if and only if typing has been completed and it is the last message or if it is on the no msgs
   useEffect(() => {
     if (isTypingComplete && messageIndex === messages.msgs.length - 1) {
       setOptionsVisible(true);
