@@ -23,7 +23,7 @@ export default function Home() {
 
   const [messageIndex, setMessageIndex] = useState(0);
   const [noMessageIndex, setNoMessageIndex] = useState(0);
-  const [optionsVisible, setOptionsVisible] = useState(true);
+  const [optionsVisible, setOptionsVisible] = useState(false);
   const [displayMessage, setDisplayMessage] = useState(messages.msgs[0]);
   const [isNoClicked, setIsNoClicked] = useState(false);
   const [isYesClicked, setIsYesClicked] = useState(false);
@@ -33,6 +33,7 @@ export default function Home() {
   const [isWelcome, setIsWelcome] = useState(true);
   const [isDialogueVisible, setIsDialogueVisible] = useState(false);
   const [zoomInAnimation, setZoomInAnimation] = useState<string>('');
+  const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const typingSpeed = 75; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
@@ -146,6 +147,8 @@ export default function Home() {
         setTypedMessage(displayMessage.slice(0, currentCharIndex));
         currentCharIndex++;
         timeoutId = setTimeout(typeMessage, typingSpeed);
+      } else {
+        setIsTypingComplete(true);
       }
     };
 
@@ -213,6 +216,7 @@ export default function Home() {
   };
   
   const handleNoClick = () => {
+    setOptionsVisible(false)
     setTypedMessage("");
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -222,6 +226,14 @@ export default function Home() {
     setIsNoClicked(true);
     playSoundEffect();
   };
+
+  useEffect(() => {
+    if (isTypingComplete && messageIndex === messages.msgs.length - 1) {
+      setOptionsVisible(true);
+    } else if (isNoClicked) {
+      setOptionsVisible(true);
+    }
+  }, [isNoClicked, isTypingComplete, messageIndex]);
 
   return (
     <div className="flex items-center justify-center h-screen relative">
@@ -315,8 +327,8 @@ export default function Home() {
                   </svg>
                 </div>
                 {/* options */}
-                {optionsVisible && messageIndex === messages.msgs.length - 1 && (
-                  <div className="absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]" style={{ filter: "url(#fancy-goo)" }}>
+                {optionsVisible && (
+                  <div className="animate-pop-up absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]" style={{ filter: "url(#fancy-goo)" }}>
                     <button
                       className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
                       onClick={handleYesClick}

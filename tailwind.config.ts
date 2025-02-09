@@ -40,6 +40,10 @@ export default {
         'zoomIn': {
           '0%': { clipPath: 'circle(150% at 50% 50%)' },
           '100%': { clipPath: 'circle(0% at 50% 50%)' },
+        },
+        'fade': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }, 
         }
       },
       animation: {
@@ -51,6 +55,7 @@ export default {
         'option': 'options 1s infinite alternate cubic-bezier(0.37, 0, 0.63, 1)',
         'expansion': 'expansion 1.8s ease-out forwards',
         'zoomIn': 'zoomIn 1.8s ease-out forwards',
+        'fade': 'fade 0.8s ease-in forwards',
       },
     },
   },
