@@ -229,7 +229,21 @@ export default function Home() {
           <div className="-mt-24 flex flex-col items-center">
             <img src="./Logo.webp" className={`scale-50 ${fadeAnimation}`} alt="Logo" />
             <div className={`text-white text-3xl mt-36 ${fadeAnimation}`} style={{ fontFamily: 'system-font' }}>
-              Press Space
+              <div className="wave-text">
+                {"Press Space".split("").map((char, index) => (
+                  char === " " ? (
+                    <span key={index} className="inline-block" style={{ marginRight: "0.3em" }}>{char}</span>
+                  ) : (
+                    <span
+                      key={index}
+                      className="inline-block animate-wave"
+                      style={{ animationDelay: `${index * 0.1}s` }} // Stagger the animation by index
+                    >
+                      {char}
+                    </span>
+                  )
+                ))}
+              </div>
             </div>
           </div>
           <audio ref={mainThemeAudioRef} src="/audio/mainTheme.mp3" loop />

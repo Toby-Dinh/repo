@@ -44,6 +44,14 @@ export default {
         'fade': {
           '0%': { opacity: '1' },
           '100%': { opacity: '0' }, 
+        }, 
+        'wave': {
+          '0%, 40%, 100%': {
+            transform: 'translateY(0)',
+          },
+          '20%': {
+            transform: 'translateY(-3px)',
+          },
         }
       },
       animation: {
@@ -56,6 +64,7 @@ export default {
         'expansion': 'expansion 1.8s ease-out forwards',
         'zoomIn': 'zoomIn 1.8s ease-out forwards',
         'fade': 'fade 0.8s ease-in forwards',
+        'wave': 'wave 1.2s infinite',
       },
     },
   },
