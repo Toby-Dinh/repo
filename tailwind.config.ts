@@ -42,8 +42,8 @@ export default {
           '100%': { clipPath: 'circle(0% at 50% 50%)' },
         },
         'fade': {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' }, 
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' }, 
         }
       },
       animation: {

@@ -33,6 +33,7 @@ export default function Home() {
   const [isWelcome, setIsWelcome] = useState(true);
   const [isDialogueVisible, setIsDialogueVisible] = useState(false);
   const [zoomInAnimation, setZoomInAnimation] = useState<string>('');
+  const [fadeAnimation, setFadeAnimation] = useState<string>('');
   const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const [arrowVisible, setArrowVisible] = useState(false);
   const typingSpeed = 75; // Adjust typing speed here
@@ -83,11 +84,14 @@ export default function Home() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
         setTimeout(() => {
-          setZoomInAnimation('animate-zoomIn')
+          setFadeAnimation('animate-fade');
+        }, 250)
+        setTimeout(() => {
+          setZoomInAnimation('animate-zoomIn');
           setTimeout(() => {
             setIsWelcome(false);
           }, 2000);
-        }, 500);
+        }, 1000);
         if (soundEffectAudioRef.current) {
           soundEffectAudioRef.current.currentTime = 0; // Reset playback position
           soundEffectAudioRef.current.play().catch((error) => {
@@ -223,8 +227,8 @@ export default function Home() {
       {isWelcome ? (
         <div className={`h-screen w-full bg-[url('/background.jpg')] bg-cover bg-center ${zoomInAnimation}`}>
           <div className="-mt-24 flex flex-col items-center">
-            <img src="./Logo.webp" className="scale-50" alt="Logo" />
-            <div className="text-white text-3xl mt-36" style={{ fontFamily: 'system-font' }}>
+            <img src="./Logo.webp" className={`scale-50 ${fadeAnimation}`} alt="Logo" />
+            <div className={`text-white text-3xl mt-36 ${fadeAnimation}`} style={{ fontFamily: 'system-font' }}>
               Press Space
             </div>
           </div>
@@ -311,7 +315,10 @@ export default function Home() {
                 </div>
                 {/* options */}
                 {optionsVisible && (
-                  <div className="animate-pop-up absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]" style={{ filter: "url(#fancy-goo)" }}>
+                  <div 
+                    className={`animate-pop-up absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]`} 
+                    style={{ filter: "url(#fancy-goo)" }}
+                  >
                     <button
                       className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
                       onClick={handleYesClick}
