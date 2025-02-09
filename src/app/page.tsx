@@ -151,6 +151,7 @@ export default function Home() {
         timeoutId = setTimeout(typeMessage, typingSpeed);
       } else {
         setIsTypingComplete(true);
+        console.log(isTypingComplete);
       }
     };
 
@@ -229,12 +230,12 @@ export default function Home() {
 
   // Hook to set options to visible if and only if typing has been completed and it is the last message or if it is on the no msgs
   useEffect(() => {
-    if (isTypingComplete && messageIndex === messages.msgs.length - 1) {
-      setOptionsVisible(true);
-    } else if (isNoClicked) {
-      setOptionsVisible(true);
+    if (isTypingComplete) {
+      if (messageIndex === messages.msgs.length - 1 || isNoClicked) {
+        setOptionsVisible(true);
+      }
     }
-  }, [isNoClicked, isTypingComplete, messageIndex]);
+  }, [isNoClicked, isTypingComplete, messageIndex, messages.msgs.length]);
 
   return (
     <div className="flex items-center justify-center h-screen relative">
