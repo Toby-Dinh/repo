@@ -169,7 +169,7 @@ export default function Home() {
         if (messageIndex !== messages.msgs.length - 1) {
           setArrowVisible(true);
         }
-        if (isNoClicked || messageIndex === messages.msgs.length - 1) {
+        if ((isNoClicked || messageIndex === messages.msgs.length - 1) && !isYesClicked) {
           setOptionsVisible(true);
         }
       }
