@@ -14,10 +14,19 @@ export default function Home() {
     ],
     yes_msg: ["See you on the 14th of February! I love you!"],
     no_msgs: [
-      "Please please please please please please please please please please",
-      "Can you please be my valentine...?",
+      "I'll do anything you want forever if you say yes to being my valentine. Will you be my valentine now?",
       "What if I got you a puppy?",
       "Okay fine, a puppy and a kitten? Now will you be my valentine?",
+      "I'll bake you cookies, cake, AND cupcakes... will you please be my valentine?",
+      "Fine... you leave me no choice, I'll give you bing and bong.",
+      "NOT EVEN THAT WOULD WORK? If I stop eating McDonalds and KFC, will you be my valentine?",
+      "YOU KNOW WHAT I DONT EVEN WANT TO BE YOUR VALENTINE... but if I got you flowers, will you be my valentine?",
+      "I'll wipe my face and mouth every time after I finish eating, will you be my valentine now?",
+      "Okay how about I give you all the money in my bank account. Can you please... please be my valentine.",
+      "YOU LEAVE ME NO CHOICE, BE MY VALENTINE OR ELSE... OR ELSE... um... OR ELSE I'LL GIVE BING AND BONG AWAY",
+      "You're a tough negotiator... Okay fine, I promise I'll stop scratching my butt in front of you, am I valentine-worthy now?",
+      "If you be my valentine, I'll send you all the money in my bank account.",
+      "Hmmm... how about if I let you choose whatever place we eat at for a whole year",
     ],
   };
 
@@ -269,8 +278,7 @@ export default function Home() {
               }`}
             >
               <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
-                <source src="/background.mov" type="video/mp4" />
-                Your browser does not support the video tag.
+                <source src="/neutral.mov" type="video/mp4" />
               </video>
             </div>
             {isDialogueVisible && (
