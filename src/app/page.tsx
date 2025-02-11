@@ -66,7 +66,11 @@ export default function Home() {
         setAudioPlayed(true);
       }
     }
-    handlePlayMainTheme();
+    document.addEventListener("click", handlePlayMainTheme);
+
+    return () => {
+      document.addEventListener("click", handlePlayMainTheme)
+    };
   }, [audioPlayed])
 
   useEffect(() => {
