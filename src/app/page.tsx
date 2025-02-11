@@ -46,9 +46,8 @@ export default function Home() {
   const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const [arrowVisible, setArrowVisible] = useState(false);
   const [reaction, setReaction] = useState<string>('neutral');
-  const [hoveredOption, setHoveredOption] = useState<string | null>(null);
+  const [hoveredOption, setHoveredOption] = useState<string>("yes");
   const [pointerPosition, setPointerPosition] = useState({ top: 0, left: 0 });
-  const [activeOption, setActiveOption] = useState<string | null>(null);
   const typingSpeed = 28.8; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
@@ -370,10 +369,9 @@ export default function Home() {
                         className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
                         onMouseEnter={(e) => {
                           setHoveredOption("yes");
-                          const rect = e.currentTarget.getBoundingClientRect();
                           setPointerPosition({
-                            top: rect.top + rect.height / 2,
-                            left: rect.left - 15.5, // Adjust offset as needed
+                            top: 450,
+                            left: 1345
                           });
                         }}
                         onClick={handleYesClick}
@@ -390,10 +388,9 @@ export default function Home() {
                         className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
                         onMouseEnter={(e) => {
                           setHoveredOption("no");;
-                          const rect = e.currentTarget.getBoundingClientRect();
                           setPointerPosition({
-                            top: rect.top + rect.height / 2,
-                            left: rect.left, // Adjust offset as needed
+                            top: 510,
+                            left: 1345,
                           });
                         }}
                         onClick={handleNoClick}
