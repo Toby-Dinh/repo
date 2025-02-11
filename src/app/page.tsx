@@ -46,6 +46,7 @@ export default function Home() {
   const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const [arrowVisible, setArrowVisible] = useState(false);
   const [reaction, setReaction] = useState<string>('neutral');
+  const [hoveredOption, setHoveredOption] = useState<string | null>(null);
   const typingSpeed = 28.8; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
@@ -223,7 +224,7 @@ export default function Home() {
   
   const handleNoClick = () => {
     setOptionsVisible(false)
-    setReaction("sadness");
+    setReaction("sorrowness");
     setTypedMessage("");
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -268,7 +269,7 @@ export default function Home() {
         isLoading ? (
           <div className={`flex items-center justify-center h-screen relative`}>
               {/* Gif */}
-              <div className="fixed bottom-0 right-0 w-56 h-56">
+              <div className="fixed bottom-0 right-0 w-72 h-72">
               <img
                   src="./loader.gif"
                   alt="Loading..."
@@ -353,8 +354,11 @@ export default function Home() {
                     className={`animate-pop-up absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]`} 
                     style={{ filter: "url(#fancy-goo)" }}
                   >
+
                     <button
                       className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+                      onMouseEnter={() => setHoveredOption("yes")}
+                      onMouseLeave={() => setHoveredOption(null)}
                       onClick={handleYesClick}
                     >
                       <span className="relative z-10">Yes!</span>
@@ -363,6 +367,8 @@ export default function Home() {
   
                     <button
                       className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+                      onMouseEnter={() => setHoveredOption("no")}
+                      onMouseLeave={() => setHoveredOption(null)}
                       onClick={handleNoClick}
                     >
                       <span className="relative z-10">Nope.</span>
