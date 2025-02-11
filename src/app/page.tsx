@@ -213,7 +213,11 @@ export default function Home() {
   };
   
   const handleYesClick = () => {
-    setReaction("love");
+    if (reaction === "sorrowness") {
+      setReaction("sorrownesstolove");
+    } else {
+      setReaction("love");
+    }
     setTypedMessage("");
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
