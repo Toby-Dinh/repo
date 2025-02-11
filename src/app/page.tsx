@@ -14,7 +14,7 @@ export default function Home() {
     ],
     yes_msg: ["See you on the 14th of February! I love you!"],
     no_msgs: [
-      "I'll do anything you want forever if you say yes to being my valentine. Will you be my valentine now?",
+      "I'll do anything for you want forever if you say yes to being my valentine. Will you be my valentine now?",
       "What if I got you a puppy?",
       "Okay fine, a puppy and a kitten? Now will you be my valentine?",
       "I'll bake you cookies, cake, AND cupcakes... will you please be my valentine?",
@@ -45,7 +45,8 @@ export default function Home() {
   const [fadeAnimation, setFadeAnimation] = useState<string>('');
   const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const [arrowVisible, setArrowVisible] = useState(false);
-  const typingSpeed = 29; // Adjust typing speed here
+  const [reaction, setReaction] = useState<string>('neutral');
+  const typingSpeed = 28.8; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
   const mainThemeAudioRef = useRef<HTMLAudioElement>(null); 
@@ -211,6 +212,7 @@ export default function Home() {
   };
   
   const handleYesClick = () => {
+    setReaction("love");
     setTypedMessage("");
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
@@ -221,6 +223,7 @@ export default function Home() {
   
   const handleNoClick = () => {
     setOptionsVisible(false)
+    setReaction("sadness");
     setTypedMessage("");
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -280,8 +283,14 @@ export default function Home() {
                 !isLoading ? "animate-expansion" : ""
               }`}
             >
-              <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
-                <source src="/neutral.mov" type="video/mp4" />
+              <video
+                key={reaction} // Ensures the video re-renders when reaction changes
+                autoPlay
+                loop
+                muted
+                className="absolute top-0 left-0 w-full h-full object-cover"
+              >
+                <source src={`/${reaction}.mov`} type="video/mp4" />
               </video>
             </div>
             {isDialogueVisible && (
