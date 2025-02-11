@@ -47,6 +47,8 @@ export default function Home() {
   const [arrowVisible, setArrowVisible] = useState(false);
   const [reaction, setReaction] = useState<string>('neutral');
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
+  const [pointerPosition, setPointerPosition] = useState({ top: 0, left: 0 });
+  const [activeOption, setActiveOption] = useState<string | null>(null);
   const typingSpeed = 28.8; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
@@ -358,31 +360,65 @@ export default function Home() {
                 </div>
                 {/* options */}
                 {optionsVisible && (
-                  <div 
-                    className={`animate-pop-up absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]`} 
-                    style={{ filter: "url(#fancy-goo)" }}
-                  >
+                  <>
+                    <div 
+                      className={`animate-pop-up absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]`} 
+                      style={{ filter: "url(#fancy-goo)" }}
+                    >
 
-                    <button
-                      className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                      onMouseEnter={() => setHoveredOption("yes")}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      onClick={handleYesClick}
-                    >
-                      <span className="relative z-10">Yes!</span>
-                      <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-                    </button>
-  
-                    <button
-                      className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                      onMouseEnter={() => setHoveredOption("no")}
-                      onMouseLeave={() => setHoveredOption(null)}
-                      onClick={handleNoClick}
-                    >
-                      <span className="relative z-10">Nope.</span>
-                      <span className="absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-                    </button>
-                  </div>
+                      <button
+                        className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+                        onMouseEnter={(e) => {
+                          setHoveredOption("yes");
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          setPointerPosition({
+                            top: rect.top + rect.height / 2,
+                            left: rect.left - 15.5, // Adjust offset as needed
+                          });
+                        }}
+                        onClick={handleYesClick}
+                      >
+                        <span className="relative z-10">Yes!</span>
+                        <span
+                          className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg transition-opacity duration-300 ${
+                            hoveredOption === "yes" ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                          }`}
+                        ></span>
+                      </button>
+    
+                      <button
+                        className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+                        onMouseEnter={(e) => {
+                          setHoveredOption("no");;
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          setPointerPosition({
+                            top: rect.top + rect.height / 2,
+                            left: rect.left, // Adjust offset as needed
+                          });
+                        }}
+                        onClick={handleNoClick}
+                      >
+                        <span className="relative z-10">Nope.</span>
+                        <span
+                          className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg transition-opacity duration-300 ${
+                            hoveredOption === "no" ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                          }`}
+                        ></span>
+                      </button>
+                    </div>
+                    {(pointerPosition.left !== 0) && (
+                      <img
+                        src="/pointer.png"
+                        alt="Pointer"
+                        className="absolute w-20 h-16"
+                        style={{
+                          top: pointerPosition.top,
+                          left: pointerPosition.left,
+                          transform: "translate(-100%, -50%)",
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             )}

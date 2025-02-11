@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "For Alisa",
+  title: "Will you be my valentine?",
 };
 
 export default function RootLayout({
