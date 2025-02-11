@@ -47,7 +47,7 @@ export default function Home() {
   const [arrowVisible, setArrowVisible] = useState(false);
   const [reaction, setReaction] = useState<string>('neutral');
   const [hoveredOption, setHoveredOption] = useState<string>("yes");
-  const [pointerPosition, setPointerPosition] = useState({ top: 0, left: 0 });
+  const [pointerPosition, setPointerPosition] = useState({ top: 450, left: 1345 });
   const typingSpeed = 28.8; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
