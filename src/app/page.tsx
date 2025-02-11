@@ -234,9 +234,12 @@ export default function Home() {
   return (
     <div className="flex items-center justify-center h-screen relative">
       {isWelcome ? (
-        <div className={`h-screen w-full bg-[url('/background.jpg')] bg-cover bg-center ${zoomInAnimation}`}>
+        <div className={`h-screen w-full ${zoomInAnimation}`}>
+          <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
+            <source src="/titleBackground.mov" type="video/mp4" />
+          </video>
           <div className="-mt-24 flex flex-col items-center">
-            <img src="./Logo.webp" className={`scale-50 ${fadeAnimation}`} alt="Logo" />
+            <img src="./Logo.webp" className={`scale-50 -mt-10 ${fadeAnimation}`} alt="Logo" />
             <div className={`text-white text-3xl mt-36 ${fadeAnimation}`} style={{ fontFamily: 'system-font' }}>
               <div className="wave-text">
                 {"Press Space".split("").map((char, index) => (
