@@ -370,8 +370,8 @@ export default function Home() {
                         onMouseEnter={(e) => {
                           setHoveredOption("yes");
                           setPointerPosition({
-                            top: 450,
-                            left: 1345
+                            top: 420,
+                            left: 1260
                           });
                         }}
                         onClick={handleYesClick}
@@ -389,8 +389,8 @@ export default function Home() {
                         onMouseEnter={(e) => {
                           setHoveredOption("no");;
                           setPointerPosition({
-                            top: 510,
-                            left: 1345,
+                            top: 480,
+                            left: 1260,
                           });
                         }}
                         onClick={handleNoClick}
@@ -407,11 +407,10 @@ export default function Home() {
                       <img
                         src="/pointer.png"
                         alt="Pointer"
-                        className="absolute w-20 h-16"
+                        className="absolute w-20 h-16 animate-back-and-fourth"
                         style={{
                           top: pointerPosition.top,
                           left: pointerPosition.left,
-                          transform: "translate(-100%, -50%)",
                         }}
                       />
                     )}
