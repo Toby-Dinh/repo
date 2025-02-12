@@ -47,7 +47,7 @@ export default function Home() {
   const [arrowVisible, setArrowVisible] = useState(false);
   const [reaction, setReaction] = useState<string>('neutral');
   const [hoveredOption, setHoveredOption] = useState<string>("yes");
-  const [pointerPosition, setPointerPosition] = useState({ top: 450, left: 1345 });
+  const [pointerPosition, setPointerPosition] = useState({ top: 420, left: 1265 });
   const typingSpeed = 28.8; // Adjust typing speed here
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
@@ -371,7 +371,7 @@ export default function Home() {
                           setHoveredOption("yes");
                           setPointerPosition({
                             top: 420,
-                            left: 1260
+                            left: 1265
                           });
                         }}
                         onClick={handleYesClick}
@@ -399,8 +399,8 @@ export default function Home() {
                         onMouseEnter={(e) => {
                           setHoveredOption("no");;
                           setPointerPosition({
-                            top: 480,
-                            left: 1260,
+                            top: 485,
+                            left: 1265,
                           });
                         }}
                         onClick={handleNoClick}
@@ -427,7 +427,7 @@ export default function Home() {
                       <img
                         src="/pointer.png"
                         alt="Pointer"
-                        className="absolute w-20 h-16 animate-back-and-fourth"
+                        className="absolute w-[4.5rem] h-[3.5rem] animate-back-and-fourth"
                         style={{
                           top: pointerPosition.top,
                           left: pointerPosition.left,
