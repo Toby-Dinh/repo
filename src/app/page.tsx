@@ -45,7 +45,7 @@ export default function Home() {
   const [fadeAnimation, setFadeAnimation] = useState<string>('');
   const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const [arrowVisible, setArrowVisible] = useState(false);
-  const [reaction, setReaction] = useState<string>('neutral');
+  // const [reaction, setReaction] = useState<string>('neutral');
   const [hoveredOption, setHoveredOption] = useState<string>("yes");
   const [pointerPosition, setPointerPosition] = useState({ top: 420, left: 1265 });
   const typingSpeed = 28.8; // Adjust typing speed here
@@ -58,7 +58,26 @@ export default function Home() {
   const soundEffect3AudioRef = useRef<HTMLAudioElement>(null);
   const soundEffect4AudioRef = useRef<HTMLAudioElement>(null);
 
+  const currentVideoRef = useRef<HTMLVideoElement>(null);
+  const nextVideoRef = useRef<HTMLVideoElement>(null);
 
+  const [currentReaction, setCurrentReaction] = useState("neutral");
+  const [pendingReaction, setPendingReaction] = useState<string | null>(null);
+
+  useEffect(() => {
+    const reactions = ["neutral", "love", "sorrowness", "sorrownesstolove"];
+    reactions.forEach((r) => {
+      const video = document.createElement("video");
+      video.src = `/${r}.mov`;
+      video.preload = "auto";
+    });
+  }, []);
+
+  const transitionToReaction = (newReaction: string) => {
+    setPendingReaction(newReaction);
+  };
+
+  
   useEffect(() => {
     const handlePlayMainTheme = () => {
       if (mainThemeAudioRef.current && !audioPlayed) {
@@ -211,11 +230,7 @@ export default function Home() {
   };
   
   const handleYesClick = () => {
-    if (reaction === "sorrowness") {
-      setReaction("sorrownesstolove");
-    } else {
-      setReaction("love");
-    }
+    transitionToReaction("love");
     setTypedMessage("");
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
@@ -226,7 +241,7 @@ export default function Home() {
   
   const handleNoClick = () => {
     setOptionsVisible(false)
-    setReaction("sorrowness");
+    transitionToReaction("sorrowness");
     setTypedMessage("");
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -287,15 +302,43 @@ export default function Home() {
               }`}
             >
               <video
-                key={reaction} 
+                ref={currentVideoRef}
+                preload="auto"
                 autoPlay
                 loop
                 muted
-                preload="auto"
-                className="absolute top-0 left-0 w-full h-full object-cover"
+                className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+                style={{ opacity: 1 }}
+                key={currentReaction}
               >
-                <source src={`/${reaction}.mov`} type="video/mp4" />
+                <source src={`/${currentReaction}.mov`} type="video/mp4" />
               </video>
+              {pendingReaction && (
+                <video
+                  ref={nextVideoRef}
+                  preload="auto"
+                  autoPlay
+                  loop
+                  muted
+                  className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+                  style={{ opacity: 0 }}
+                  onCanPlay={() => {
+                    if (nextVideoRef.current) {
+                      nextVideoRef.current.style.opacity = "1";
+                    }
+                    if (currentVideoRef.current) {
+                      currentVideoRef.current.style.opacity = "0";
+                    }
+                    setTimeout(() => {
+                      setCurrentReaction(pendingReaction);
+                      setPendingReaction(null);
+                    }, 1000);
+                  }}
+                  key={pendingReaction}
+                >
+                  <source src={`/${pendingReaction}.mov`} type="video/mp4" />
+                </video>
+              )}
             </div>
             {isDialogueVisible && (
               <div className="flex items-center justify-center h-screen">
