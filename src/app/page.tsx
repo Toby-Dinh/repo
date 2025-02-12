@@ -58,6 +58,7 @@ export default function Home() {
   const soundEffect3AudioRef = useRef<HTMLAudioElement>(null);
   const soundEffect4AudioRef = useRef<HTMLAudioElement>(null);
 
+
   useEffect(() => {
     const handlePlayMainTheme = () => {
       if (mainThemeAudioRef.current && !audioPlayed) {
@@ -126,27 +127,20 @@ export default function Home() {
     const handleSpace = (event: KeyboardEvent) => {
       if (event.code !== "Space" || isWelcome || isLoading) return;
   
-      if (!optionsVisible && !isNoClicked) {
+      if (!optionsVisible && !isNoClicked && isTypingComplete) {
         if (messageIndex < messages.msgs.length - 1) {
           soundEffect2AudioRef.current?.play().catch((error) =>
             console.error("Failed to play sound effect:", error)
           );
           setMessageIndex((prevIndex) => prevIndex + 1);
         }
-        
-      } else if (isNoClicked) {
-        setNoMessageIndex((prevIndex) => {
-          const newIndex = (prevIndex + 1) % messages.no_msgs.length;
-          setDisplayMessage(messages.no_msgs[newIndex]);
-          return newIndex;
-        });
       }
     };
 
     window.addEventListener("keydown", handleSpace);
     return () => window.removeEventListener("keydown", handleSpace);
 
-  }, [messages.msgs.length, messageIndex, messages.no_msgs.length, optionsVisible, isNoClicked, isWelcome, isLoading]);
+  }, [messages.msgs.length, messageIndex, messages.no_msgs.length, optionsVisible, isNoClicked, isWelcome, isTypingComplete, isLoading]);
 
   useEffect(() => {
     if (!isYesClicked && !isNoClicked) {
