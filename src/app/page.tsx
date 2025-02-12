@@ -58,7 +58,6 @@ export default function Home() {
   const soundEffect3AudioRef = useRef<HTMLAudioElement>(null);
   const soundEffect4AudioRef = useRef<HTMLAudioElement>(null);
 
-
   useEffect(() => {
     const handlePlayMainTheme = () => {
       if (mainThemeAudioRef.current && !audioPlayed) {
@@ -294,10 +293,11 @@ export default function Home() {
               }`}
             >
               <video
-                key={reaction} // Ensures the video re-renders when reaction changes
+                key={reaction} 
                 autoPlay
                 loop
                 muted
+                preload="auto"
                 className="absolute top-0 left-0 w-full h-full object-cover"
               >
                 <source src={`/${reaction}.mov`} type="video/mp4" />
