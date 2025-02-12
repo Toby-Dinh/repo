@@ -376,7 +376,17 @@ export default function Home() {
                         }}
                         onClick={handleYesClick}
                       >
-                        <span className="relative z-10">Yes!</span>
+                        <span className="relative z-10">
+                        {"Yes!".split("").map((char, index) => (
+                          <span
+                            key={index}
+                            className="inline-block group-hover:animate-wave-once"
+                            style={{ animationDelay: `${index * 0.1}s` }}
+                          >
+                            {char}
+                          </span>
+                        ))}
+                        </span>
                         <span
                           className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg transition-opacity duration-300 ${
                             hoveredOption === "yes" ? "opacity-100" : "opacity-0 group-hover:opacity-100"
@@ -395,7 +405,17 @@ export default function Home() {
                         }}
                         onClick={handleNoClick}
                       >
-                        <span className="relative z-10">Nope.</span>
+                        <span className="relative z-10">
+                          {"Nope.".split("").map((char, index) => (
+                            <span
+                              key={index}
+                              className="inline-block group-hover:animate-wave-once"
+                              style={{ animationDelay: `${index * 0.1}s` }}
+                            >
+                              {char}
+                            </span>
+                          ))}
+                        </span>
                         <span
                           className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg transition-opacity duration-300 ${
                             hoveredOption === "no" ? "opacity-100" : "opacity-0 group-hover:opacity-100"

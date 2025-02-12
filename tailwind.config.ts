@@ -69,6 +69,7 @@ export default {
         'zoomIn': 'zoomIn 1.8s ease-out forwards',
         'fade': 'fade 0.8s ease-in forwards',
         'wave': 'wave 1.2s infinite',
+        'wave-once': 'wave 0.8s',
         'back-and-fourth': 'back-and-fourth 0.3s infinite alternate ease-in-out'
       },
     },
