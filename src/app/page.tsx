@@ -71,7 +71,7 @@ export default function Home() {
     const reactions = ["neutral", "love", "sorrowness", "sorrownesstolove"];
     reactions.forEach((r) => {
       const video = document.createElement("video");
-      video.src = `/public/${r}.mov`;
+      video.src = `/${r}.mov`;
       video.preload = "auto";
     });
   }, []);
@@ -203,11 +203,11 @@ export default function Home() {
     if (messageAudioRef.current) {
       let audioSrc = "";
       if (isNoClicked) {
-        audioSrc = `/public/audio/noMsg${noMessageIndex + 1}.wav`;
+        audioSrc = `/audio/noMsg${noMessageIndex + 1}.wav`;
       } else if (isYesClicked) {
-        audioSrc = "/public/audio/yesMsg.wav";
+        audioSrc = "/audio/yesMsg.wav";
       } else {
-        audioSrc = `/public/audio/msg${messageIndex + 1}.wav`;
+        audioSrc = `/audio/msg${messageIndex + 1}.wav`;
       }
       messageAudioRef.current.src = audioSrc;
     
@@ -218,7 +218,7 @@ export default function Home() {
     return () => {
       clearTimeout(timeoutId); 
     };
-  }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
+  }, [displayMessage, typingSpeed, messages.msgs.length, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
 
   const playSoundEffect = () => {
     soundEffect3AudioRef.current?.play().catch((error) => {
@@ -307,10 +307,10 @@ export default function Home() {
       {isWelcome ? (
         <div className={`h-screen w-full ${zoomInAnimation}`}>
           <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
-            <source src="/public/titleBackground.mov" type="video/mp4" />
+            <source src="/titleBackground.mov" type="video/mp4" />
           </video>
           <div className="-mt-24 flex flex-col items-center">
-            <Image src="/public/Logo.webp" className={`scale-50 -mt-10 ${fadeAnimation}`} alt="Logo" />
+            <Image src="/Logo.webp" className={`scale-50 -mt-10 ${fadeAnimation}`} width={100} height={100} alt="Logo" />
             <div className={`text-white text-3xl mt-36 ${fadeAnimation}`} style={{ fontFamily: 'system-font' }}>
               <div className="wave-text">
                 {"Press Space".split("").map((char, index) => (
@@ -329,8 +329,8 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <audio ref={mainThemeAudioRef} src="/public/audio/mainTheme.mp3" loop />
-          <audio ref={soundEffectAudioRef} src="/public/audio/soundEffects/sound-effect.wav" />
+          <audio ref={mainThemeAudioRef} src="/audio/mainTheme.mp3" loop />
+          <audio ref={soundEffectAudioRef} src="/audio/soundEffects/sound-effect.wav" />
         </div>
       ) : (
         isLoading ? (
@@ -338,9 +338,11 @@ export default function Home() {
               {/* Gif */}
               <div className="fixed bottom-0 right-0 w-72 h-72">
               <Image
-                  src="/public/loader.gif"
+                  src="/loader.gif"
                   alt="Loading..."
                   className="w-full h-full object-contain"
+                  width={100} // Specify the width in pixels
+                  height={100} // Specify the height in pixels
               />
               </div>
           </div>
@@ -363,7 +365,7 @@ export default function Home() {
                 style={{ opacity: 1 }}
                 key={currentReaction}
               >
-                <source src={`/public/${currentReaction}.mov`} type="video/mp4" />
+                <source src={`/${currentReaction}.mov`} type="video/mp4" />
               </video>
               {pendingReaction && (
                 <video
@@ -388,19 +390,19 @@ export default function Home() {
                   }}
                   key={pendingReaction}
                 >
-                  <source src={`/public/${pendingReaction}.mov`} type="video/mp4" />
+                  <source src={`/${pendingReaction}.mov`} type="video/mp4" />
                 </video>
               )}
             </div>
             {isDialogueVisible && (
               <div className="flex items-center justify-center h-screen">
                 {/* audio */}
-                <audio ref={musicAudioRef} src="/public/audio/music.mp3" loop />
+                <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
-                <audio ref={soundEffect2AudioRef} src="/public/audio/soundEffects/sound-effect2.wav" />
-                <audio ref={soundEffect3AudioRef} src="/public/audio/soundEffects/sound-effect3.wav" />
-                <audio ref={loveSoundEffect} src="/public/audio/soundEffects/love.mp3" />
-                <audio ref={sorrownessSoundEffect} src="/public/audio/soundEffects/sorrowness.mp3" />
+                <audio ref={soundEffect2AudioRef} src="/audio/soundEffects/sound-effect2.wav" />
+                <audio ref={soundEffect3AudioRef} src="/audio/soundEffects/sound-effect3.wav" />
+                <audio ref={loveSoundEffect} src="/audio/soundEffects/love.mp3" />
+                <audio ref={sorrownessSoundEffect} src="/audio/soundEffects/sorrowness.mp3" />
                 {/* SVG filter */}
                 <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
                   <defs>
@@ -515,13 +517,15 @@ export default function Home() {
                     </div>
                     {(pointerPosition.left !== 0) && (
                       <Image
-                        src="/public/pointer.png"
+                        src="/pointer.png"
                         alt="Pointer"
                         className="absolute w-[4.5rem] h-[3.5rem] animate-back-and-fourth"
                         style={{
                           top: pointerPosition.top,
                           left: pointerPosition.left,
                         }}
+                        width={100} // Specify the width in pixels
+                        height={100} // Specify the height in pixels
                       />
                     )}
                   </>
