@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, HtmlHTMLAttributes } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Home() {
   const messages = {
@@ -56,7 +56,6 @@ export default function Home() {
   const soundEffectAudioRef = useRef<HTMLAudioElement>(null);
   const soundEffect2AudioRef = useRef<HTMLAudioElement>(null);
   const soundEffect3AudioRef = useRef<HTMLAudioElement>(null);
-  const soundEffect4AudioRef = useRef<HTMLAudioElement>(null);
 
   const loveSoundEffect = useRef<HTMLAudioElement>(null);
   const sorrownessSoundEffect = useRef<HTMLAudioElement>(null);
@@ -266,7 +265,6 @@ export default function Home() {
     playLoveSound();
   };
   
-  const sorrownessPlayedOnce = useRef(false);
   const [hasPlayedSorrownessSound, setHasPlayedSorrownessSound] = useState(false);
 
   const handleNoClick = () => {
@@ -285,7 +283,6 @@ export default function Home() {
       setHasPlayedSorrownessSound(true);
     }
   };
-  const [isSorrownessLooping, setIsSorrownessLooping] = useState(false);
 
   useEffect(() => {
     if (currentReaction === "sorrowness" && currentVideoRef.current) {
