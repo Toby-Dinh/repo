@@ -76,8 +76,8 @@ export default function Home() {
     });
   }, []);
 
-  const transitionToReaction = (newReaction: string, force: boolean = false) => {
-    if (!force && newReaction === currentReaction) return;
+  const transitionToReaction = (newReaction: string) => {
+    if (newReaction === currentReaction) return;
     setPendingReaction(newReaction);
   };
 
@@ -268,7 +268,7 @@ export default function Home() {
   
   const handleNoClick = () => {
     setOptionsVisible(false)
-    transitionToReaction("sorrowness", true);
+    transitionToReaction("sorrowness");
     setTypedMessage("");
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
