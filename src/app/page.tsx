@@ -45,6 +45,7 @@ export default function Home() {
   const [fadeAnimation, setFadeAnimation] = useState<string>('');
   const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const [arrowVisible, setArrowVisible] = useState(false);
+  // const [reaction, setReaction] = useState<string>('neutral');
   const [hoveredOption, setHoveredOption] = useState<string>("yes");
   const [pointerPosition, setPointerPosition] = useState({ top: 420, left: 1265 });
   const typingSpeed = 28.8; // Adjust typing speed here
@@ -240,7 +241,7 @@ export default function Home() {
       loveSoundEffect.current.currentTime = 0;
     }
   }
-  const [hasPlayedSorrowSound, setHasPlayedSorrowSound] = useState(false);
+
   const playSorrownessSound = () => {
     sorrownessSoundEffect.current?.play().catch((error) => {
       console.error("Failed to play sound effect:", error);
@@ -264,6 +265,10 @@ export default function Home() {
     playSoundEffect();
     playLoveSound();
   };
+  
+  const sorrownessPlayedOnce = useRef(false);
+  const [hasPlayedSorrownessSound, setHasPlayedSorrownessSound] = useState(false);
+
   const handleNoClick = () => {
     setOptionsVisible(false)
     transitionToReaction("sorrowness");
@@ -275,11 +280,33 @@ export default function Home() {
     });
     setIsNoClicked(true);
     playSoundEffect();
-    if (!hasPlayedSorrowSound) {
+    if (!hasPlayedSorrownessSound) {
       playSorrownessSound();
-      setHasPlayedSorrowSound(true);
+      setHasPlayedSorrownessSound(true);
     }
   };
+  const [isSorrownessLooping, setIsSorrownessLooping] = useState(false);
+
+  useEffect(() => {
+    if (currentReaction === "sorrowness" && currentVideoRef.current) {
+      const video = currentVideoRef.current;
+      // Disable built‑in looping
+      video.loop = false;
+      
+      const threshold = 0.1; // seconds before the end
+      const handleTimeUpdate = () => {
+        if (video.duration && video.currentTime >= video.duration - threshold) {
+          // Jump back to 5 seconds and resume playback
+          video.currentTime = 5;
+          video.play();
+        }
+      };
+  
+      video.addEventListener("timeupdate", handleTimeUpdate);
+      return () => video.removeEventListener("timeupdate", handleTimeUpdate);
+    }
+  }, [currentReaction]);
+  
 
   return (
     <div className="flex items-center justify-center h-screen relative">
@@ -334,8 +361,10 @@ export default function Home() {
                 ref={currentVideoRef}
                 preload="auto"
                 autoPlay
-                loop
                 muted
+                // If the reaction is "sorrowness", disable looping and add onEnded handler;
+                // Otherwise, loop normally.
+                loop={currentReaction === "sorrowness" ? false : true}
                 className="absolute top-0 left-0 w-full h-full object-cover"
                 style={{ opacity: 1 }}
                 key={currentReaction}
