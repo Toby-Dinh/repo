@@ -74,6 +74,7 @@ export default function Home() {
   }, []);
 
   const transitionToReaction = (newReaction: string) => {
+    if (newReaction === currentReaction) return;
     setPendingReaction(newReaction);
   };
 
@@ -230,7 +231,11 @@ export default function Home() {
   };
   
   const handleYesClick = () => {
-    transitionToReaction("love");
+    if (currentReaction === "sorrowness") {
+      transitionToReaction("sorrownesstolove");
+    } else {
+      transitionToReaction("love");
+    }
     setTypedMessage("");
     setDisplayMessage(messages.yes_msg[0]);
     setOptionsVisible(false);
@@ -297,7 +302,7 @@ export default function Home() {
         ) : (
           <>
             <div
-              className={`fixed inset-0 z-[-1] ${
+              className={`fixed inset-0 z-0 ${
                 !isLoading ? "animate-expansion" : ""
               }`}
             >
@@ -307,7 +312,7 @@ export default function Home() {
                 autoPlay
                 loop
                 muted
-                className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+                className="absolute top-0 left-0 w-full h-full object-cover duration-1000"
                 style={{ opacity: 1 }}
                 key={currentReaction}
               >
@@ -320,7 +325,7 @@ export default function Home() {
                   autoPlay
                   loop
                   muted
-                  className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+                  className="absolute top-0 left-0 w-full h-full object-cover duration-1000"
                   style={{ opacity: 0 }}
                   onCanPlay={() => {
                     if (nextVideoRef.current) {
