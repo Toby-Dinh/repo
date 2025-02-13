@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, HtmlHTMLAttributes } from "react";
 
 export default function Home() {
   const messages = {
@@ -58,6 +58,9 @@ export default function Home() {
   const soundEffect3AudioRef = useRef<HTMLAudioElement>(null);
   const soundEffect4AudioRef = useRef<HTMLAudioElement>(null);
 
+  const loveSoundEffect = useRef<HTMLAudioElement>(null);
+  const sorrownessSoundEffect = useRef<HTMLAudioElement>(null);
+
   const currentVideoRef = useRef<HTMLVideoElement>(null);
   const nextVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -73,8 +76,8 @@ export default function Home() {
     });
   }, []);
 
-  const transitionToReaction = (newReaction: string) => {
-    if (newReaction === currentReaction) return;
+  const transitionToReaction = (newReaction: string, force: boolean = false) => {
+    if (!force && newReaction === currentReaction) return;
     setPendingReaction(newReaction);
   };
 
@@ -231,20 +234,20 @@ export default function Home() {
   };
 
   const playLoveSound = () => {
-    soundEffect3AudioRef.current?.play().catch((error) => {
+    loveSoundEffect.current?.play().catch((error) => {
       console.error("Failed to play sound effect:", error);
     });
-    if (soundEffect3AudioRef.current) {
-      soundEffect3AudioRef.current.currentTime = 0;
+    if (loveSoundEffect.current) {
+      loveSoundEffect.current.currentTime = 0;
     }
   }
 
   const playSorrownessSound = () => {
-    soundEffect3AudioRef.current?.play().catch((error) => {
+    sorrownessSoundEffect.current?.play().catch((error) => {
       console.error("Failed to play sound effect:", error);
     });
-    if (soundEffect3AudioRef.current) {
-      soundEffect3AudioRef.current.currentTime = 0;
+    if (sorrownessSoundEffect.current) {
+      sorrownessSoundEffect.current.currentTime = 0;
     }
   }
   
@@ -260,11 +263,12 @@ export default function Home() {
     setIsNoClicked(false);
     setIsYesClicked(true);
     playSoundEffect();
+    playLoveSound();
   };
   
   const handleNoClick = () => {
     setOptionsVisible(false)
-    transitionToReaction("sorrowness");
+    transitionToReaction("sorrowness", true);
     setTypedMessage("");
     setNoMessageIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % messages.no_msgs.length;
@@ -273,6 +277,7 @@ export default function Home() {
     });
     setIsNoClicked(true);
     playSoundEffect();
+    playSorrownessSound();
   };
 
   return (
@@ -371,6 +376,8 @@ export default function Home() {
                 <audio ref={messageAudioRef} id="message-audio" />
                 <audio ref={soundEffect2AudioRef} src="/audio/soundEffects/sound-effect2.wav" />
                 <audio ref={soundEffect3AudioRef} src="/audio/soundEffects/sound-effect3.wav" />
+                <audio ref={loveSoundEffect} src="/audio/soundEffects/love.mp3" />
+                <audio ref={sorrownessSoundEffect} src="/audio/soundEffects/sorrowness.mp3" />
                 {/* SVG filter */}
                 <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
                   <defs>
