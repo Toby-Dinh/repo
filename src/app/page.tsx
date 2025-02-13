@@ -312,7 +312,7 @@ export default function Home() {
                 autoPlay
                 loop
                 muted
-                className="absolute top-0 left-0 w-full h-full object-cover duration-1000"
+                className="absolute top-0 left-0 w-full h-full object-cover"
                 style={{ opacity: 1 }}
                 key={currentReaction}
               >
@@ -325,7 +325,7 @@ export default function Home() {
                   autoPlay
                   loop
                   muted
-                  className="absolute top-0 left-0 w-full h-full object-cover duration-1000"
+                  className="absolute top-0 left-0 w-full h-full object-cover"
                   style={{ opacity: 0 }}
                   onCanPlay={() => {
                     if (nextVideoRef.current) {
