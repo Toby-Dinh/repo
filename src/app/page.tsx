@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, HtmlHTMLAttributes } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Home() {
   const messages = {
@@ -30,6 +30,7 @@ export default function Home() {
     ],
   };
 
+  // Remove the extra "hasSwitchedToSorrowness" flag and instead use pendingReaction
   const [messageIndex, setMessageIndex] = useState(0);
   const [noMessageIndex, setNoMessageIndex] = useState(0);
   const [optionsVisible, setOptionsVisible] = useState(false);
@@ -45,10 +46,12 @@ export default function Home() {
   const [fadeAnimation, setFadeAnimation] = useState<string>('');
   const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const [arrowVisible, setArrowVisible] = useState(false);
-  // const [reaction, setReaction] = useState<string>('neutral');
   const [hoveredOption, setHoveredOption] = useState<string>("yes");
   const [pointerPosition, setPointerPosition] = useState({ top: 420, left: 1265 });
   const typingSpeed = 28.8; // Adjust typing speed here
+
+  // State to force video re‑render (for replaying animation on subsequent clicks)
+  const [videoKey, setVideoKey] = useState(0);
 
   const musicAudioRef = useRef<HTMLAudioElement>(null); 
   const mainThemeAudioRef = useRef<HTMLAudioElement>(null); 
@@ -64,6 +67,7 @@ export default function Home() {
   const currentVideoRef = useRef<HTMLVideoElement>(null);
   const nextVideoRef = useRef<HTMLVideoElement>(null);
 
+  // "neutral", "love", "sorrowness", "sorrownesstolove"
   const [currentReaction, setCurrentReaction] = useState("neutral");
   const [pendingReaction, setPendingReaction] = useState<string | null>(null);
 
@@ -76,30 +80,30 @@ export default function Home() {
     });
   }, []);
 
+  // Only set pendingReaction if one isn't already in progress
   const transitionToReaction = (newReaction: string) => {
-    if (newReaction === currentReaction) return;
-    setPendingReaction(newReaction);
+    if (!pendingReaction) {
+      setPendingReaction(newReaction);
+    }
   };
 
-  
   useEffect(() => {
     const handlePlayMainTheme = () => {
       if (mainThemeAudioRef.current && !audioPlayed) {
         mainThemeAudioRef.current.volume = 0.2;
-        mainThemeAudioRef.current.play()
+        mainThemeAudioRef.current.play();
         setAudioPlayed(true);
       }
-    }
-    document.addEventListener("click", handlePlayMainTheme);
-
-    return () => {
-      document.addEventListener("click", handlePlayMainTheme)
     };
-  }, [audioPlayed])
+    document.addEventListener("click", handlePlayMainTheme);
+    return () => {
+      document.removeEventListener("click", handlePlayMainTheme);
+    };
+  }, [audioPlayed]);
 
   useEffect(() => {
     if (isDialogueVisible && musicAudioRef.current) {
-      musicAudioRef.current.volume = 0.2; // Set volume to 20%
+      musicAudioRef.current.volume = 0.2;
       musicAudioRef.current.play().catch((error) => {
         console.error("Failed to play background music:", error);
       });
@@ -107,7 +111,7 @@ export default function Home() {
   }, [isDialogueVisible]);
 
   useEffect(() => {
-    if (isWelcome === false) {
+    if (!isWelcome) {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
@@ -118,38 +122,37 @@ export default function Home() {
     }
   }, [isWelcome]);
 
-  // Space to enter the loading page 
+  // Space key for the loading page
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
         setTimeout(() => {
-          setFadeAnimation('animate-fade');
-        }, 250)
+          setFadeAnimation("animate-fade");
+        }, 250);
         setTimeout(() => {
-          setZoomInAnimation('animate-zoomIn');
+          setZoomInAnimation("animate-zoomIn");
           setTimeout(() => {
             setIsWelcome(false);
           }, 2000);
         }, 1000);
         if (soundEffectAudioRef.current) {
-          soundEffectAudioRef.current.currentTime = 0; // Reset playback position
+          soundEffectAudioRef.current.currentTime = 0;
           soundEffectAudioRef.current.play().catch((error) => {
             console.error("Failed to play sound effect:", error);
           });
         }
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
-  // Hook to go to the next message
+  // Next message on Space key (when dialogue is active)
   useEffect(() => {
     const handleSpace = (event: KeyboardEvent) => {
       if (event.code !== "Space" || isWelcome || isLoading) return;
-  
       if (!optionsVisible && !isNoClicked && isTypingComplete) {
         if (messageIndex < messages.msgs.length - 1) {
           soundEffect2AudioRef.current?.play().catch((error) =>
@@ -159,11 +162,18 @@ export default function Home() {
         }
       }
     };
-
     window.addEventListener("keydown", handleSpace);
     return () => window.removeEventListener("keydown", handleSpace);
-
-  }, [messages.msgs.length, messageIndex, messages.no_msgs.length, optionsVisible, isNoClicked, isWelcome, isTypingComplete, isLoading]);
+  }, [
+    messages.msgs.length,
+    messageIndex,
+    messages.no_msgs.length,
+    optionsVisible,
+    isNoClicked,
+    isWelcome,
+    isTypingComplete,
+    isLoading,
+  ]);
 
   useEffect(() => {
     if (!isYesClicked && !isNoClicked) {
@@ -171,14 +181,12 @@ export default function Home() {
     }
   }, [messageIndex, messages.msgs, isYesClicked, isNoClicked]);
 
-  // Typing Effect
+  // Typing effect for dialogue
   useEffect(() => {
     if (!isDialogueVisible) return;
-
     let currentCharIndex = 0;
     let timeoutId: NodeJS.Timeout;
-
-    setTypedMessage(""); 
+    setTypedMessage("");
     setIsTypingComplete(false);
     setArrowVisible(false);
 
@@ -197,9 +205,8 @@ export default function Home() {
         }
       }
     };
-
     typeMessage();
-  
+
     if (messageAudioRef.current) {
       let audioSrc = "";
       if (isNoClicked) {
@@ -210,47 +217,71 @@ export default function Home() {
         audioSrc = `/audio/msg${messageIndex + 1}.wav`;
       }
       messageAudioRef.current.src = audioSrc;
-    
       setTimeout(() => {
-        messageAudioRef.current && messageAudioRef.current
+        messageAudioRef.current
           .play()
-          .catch((error) => {
-            console.error("Failed to play message audio:", error);
-          });
-      }, 250); // 1-second delay
+          .catch((error) => console.error("Failed to play message audio:", error));
+      }, 250);
     }
-    return () => {
-      clearTimeout(timeoutId); 
-    };
-  }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
+    return () => clearTimeout(timeoutId);
+  }, [
+    displayMessage,
+    typingSpeed,
+    messageIndex,
+    noMessageIndex,
+    isNoClicked,
+    isYesClicked,
+    isDialogueVisible,
+  ]);
 
   const playSoundEffect = () => {
-    soundEffect3AudioRef.current?.play().catch((error) => {
-      console.error("Failed to play sound effect:", error);
-    });
+    soundEffect3AudioRef.current?.play().catch((error) =>
+      console.error("Failed to play sound effect:", error)
+    );
     if (soundEffect3AudioRef.current) {
       soundEffect3AudioRef.current.currentTime = 0;
     }
   };
 
   const playLoveSound = () => {
-    loveSoundEffect.current?.play().catch((error) => {
-      console.error("Failed to play sound effect:", error);
-    });
+    loveSoundEffect.current?.play().catch((error) =>
+      console.error("Failed to play sound effect:", error)
+    );
     if (loveSoundEffect.current) {
       loveSoundEffect.current.currentTime = 0;
     }
-  }
+  };
 
   const playSorrownessSound = () => {
-    sorrownessSoundEffect.current?.play().catch((error) => {
-      console.error("Failed to play sound effect:", error);
-    });
+    sorrownessSoundEffect.current?.play().catch((error) =>
+      console.error("Failed to play sound effect:", error)
+    );
     if (sorrownessSoundEffect.current) {
       sorrownessSoundEffect.current.currentTime = 0;
     }
-  }
-  
+  };
+
+  // Updated "Nope" handler:
+  const handleNoClick = () => {
+    setOptionsVisible(false);
+    if (currentReaction !== "sorrowness") {
+      // For the first transition, use the pending mechanism.
+      transitionToReaction("sorrowness");
+    } else {
+      // Subsequent clicks: force replay via videoKey.
+      setVideoKey((prev) => prev + 1);
+    }
+    setTypedMessage("");
+    setNoMessageIndex((prevIndex) => {
+      const newIndex = (prevIndex + 1) % messages.no_msgs.length;
+      setDisplayMessage(messages.no_msgs[newIndex]);
+      return newIndex;
+    });
+    setIsNoClicked(true);
+    playSoundEffect();
+    playSorrownessSound();
+  };
+
   const handleYesClick = () => {
     if (currentReaction === "sorrowness") {
       transitionToReaction("sorrownesstolove");
@@ -265,20 +296,6 @@ export default function Home() {
     playSoundEffect();
     playLoveSound();
   };
-  
-  const handleNoClick = () => {
-    setOptionsVisible(false)
-    transitionToReaction("sorrowness");
-    setTypedMessage("");
-    setNoMessageIndex((prevIndex) => {
-      const newIndex = (prevIndex + 1) % messages.no_msgs.length;
-      setDisplayMessage(messages.no_msgs[newIndex]);
-      return newIndex;
-    });
-    setIsNoClicked(true);
-    playSoundEffect();
-    playSorrownessSound();
-  };
 
   return (
     <div className="flex items-center justify-center h-screen relative">
@@ -289,129 +306,122 @@ export default function Home() {
           </video>
           <div className="-mt-24 flex flex-col items-center">
             <img src="./Logo.webp" className={`scale-50 -mt-10 ${fadeAnimation}`} alt="Logo" />
-            <div className={`text-white text-3xl mt-36 ${fadeAnimation}`} style={{ fontFamily: 'system-font' }}>
+            <div className={`text-white text-3xl mt-36 ${fadeAnimation}`} style={{ fontFamily: "system-font" }}>
               <div className="wave-text">
-                {"Press Space".split("").map((char, index) => (
+                {"Press Space".split("").map((char, index) =>
                   char === " " ? (
-                    <span key={index} className="inline-block" style={{ marginRight: "0.3em" }}>{char}</span>
+                    <span key={index} className="inline-block" style={{ marginRight: "0.3em" }}>
+                      {char}
+                    </span>
                   ) : (
                     <span
                       key={index}
                       className="inline-block animate-wave"
-                      style={{ animationDelay: `${index * 0.1}s` }} // Stagger the animation by index
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       {char}
                     </span>
                   )
-                ))}
+                )}
               </div>
             </div>
           </div>
           <audio ref={mainThemeAudioRef} src="/audio/mainTheme.mp3" loop />
           <audio ref={soundEffectAudioRef} src="/audio/soundEffects/sound-effect.wav" />
         </div>
-      ) : (
-        isLoading ? (
-          <div className={`flex items-center justify-center h-screen relative`}>
-              {/* Gif */}
-              <div className="fixed bottom-0 right-0 w-72 h-72">
-              <img
-                  src="./loader.gif"
-                  alt="Loading..."
-                  className="w-full h-full object-contain"
-              />
-              </div>
+      ) : isLoading ? (
+        <div className="flex items-center justify-center h-screen relative">
+          <div className="fixed bottom-0 right-0 w-72 h-72">
+            <img src="./loader.gif" alt="Loading..." className="w-full h-full object-contain" />
           </div>
-        ) : (
-          <>
-            <div
-              className={`fixed inset-0 z-0 ${
-                !isLoading ? "animate-expansion" : ""
-              }`}
+        </div>
+      ) : (
+        <>
+          <div className={`fixed inset-0 z-0 ${!isLoading ? "animate-expansion" : ""}`}>
+            {/* The current video uses a key that includes videoKey for replays */}
+            <video
+              ref={currentVideoRef}
+              preload="auto"
+              autoPlay
+              loop
+              muted
+              className="absolute top-0 left-0 w-full h-full object-cover"
+              style={{ opacity: 1 }}
+              key={`${currentReaction}-${videoKey}`}
             >
+              <source src={`/${currentReaction}.mov`} type="video/mp4" />
+            </video>
+            {pendingReaction && (
               <video
-                ref={currentVideoRef}
+                ref={nextVideoRef}
                 preload="auto"
                 autoPlay
                 loop
                 muted
                 className="absolute top-0 left-0 w-full h-full object-cover"
-                style={{ opacity: 1 }}
-                key={currentReaction}
+                style={{ opacity: 0 }}
+                onCanPlay={() => {
+                  if (nextVideoRef.current) {
+                    nextVideoRef.current.style.opacity = "1";
+                  }
+                  if (currentVideoRef.current) {
+                    currentVideoRef.current.style.opacity = "0";
+                  }
+                  // Immediately complete the transition
+                  setCurrentReaction(pendingReaction);
+                  setPendingReaction(null);
+                }}
+                key={pendingReaction}
               >
-                <source src={`/${currentReaction}.mov`} type="video/mp4" />
+                <source src={`/${pendingReaction}.mov`} type="video/mp4" />
               </video>
-              {pendingReaction && (
-                <video
-                  ref={nextVideoRef}
-                  preload="auto"
-                  autoPlay
-                  loop
-                  muted
-                  className="absolute top-0 left-0 w-full h-full object-cover"
-                  style={{ opacity: 0 }}
-                  onCanPlay={() => {
-                    if (nextVideoRef.current) {
-                      nextVideoRef.current.style.opacity = "1";
-                    }
-                    if (currentVideoRef.current) {
-                      currentVideoRef.current.style.opacity = "0";
-                    }
-                    setTimeout(() => {
-                      setCurrentReaction(pendingReaction);
-                      setPendingReaction(null);
-                    }, 1000);
-                  }}
-                  key={pendingReaction}
+            )}
+          </div>
+          {isDialogueVisible && (
+            <div className="flex items-center justify-center h-screen">
+              <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
+              <audio ref={messageAudioRef} id="message-audio" />
+              <audio ref={soundEffect2AudioRef} src="/audio/soundEffects/sound-effect2.wav" />
+              <audio ref={soundEffect3AudioRef} src="/audio/soundEffects/sound-effect3.wav" />
+              <audio ref={loveSoundEffect} src="/audio/soundEffects/love.mp3" />
+              <audio ref={sorrownessSoundEffect} src="/audio/soundEffects/sorrowness.mp3" />
+              <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
+                <defs>
+                  <filter id="fancy-goo">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                    <feColorMatrix
+                      in="blur"
+                      mode="matrix"
+                      values="1 0 0 0 0  
+                              0 1 0 0 0  
+                              0 0 1 0 0  
+                              0 0 0 19 -9"
+                      result="goo"
+                    />
+                    <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+                  </filter>
+                </defs>
+              </svg>
+              <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-[25rem]">
+                <div
+                  className="animate-pop-up relative w-[100%] flex flex-col items-center justify-stretch"
+                  style={{ filter: "url(#fancy-goo)" }}
                 >
-                  <source src={`/${pendingReaction}.mov`} type="video/mp4" />
-                </video>
-              )}
-            </div>
-            {isDialogueVisible && (
-              <div className="flex items-center justify-center h-screen">
-                {/* <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" /> */}
-                {/* audio */}
-                <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
-                <audio ref={messageAudioRef} id="message-audio" />
-                <audio ref={soundEffect2AudioRef} src="/audio/soundEffects/sound-effect2.wav" />
-                <audio ref={soundEffect3AudioRef} src="/audio/soundEffects/sound-effect3.wav" />
-                <audio ref={loveSoundEffect} src="/audio/soundEffects/love.mp3" />
-                <audio ref={sorrownessSoundEffect} src="/audio/soundEffects/sorrowness.mp3" />
-                {/* SVG filter */}
-                <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
-                  <defs>
-                    <filter id="fancy-goo">
-                      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-                      <feColorMatrix
-                        in="blur"
-                        mode="matrix"
-                        values="1 0 0 0 0  
-                                0 1 0 0 0  
-                                0 0 1 0 0  
-                                0 0 0 19 -9"
-                        result="goo"
-                      />
-                      <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-                    </filter>
-                  </defs>
-                </svg>
-                {/* speech bubble */}
-                <div className="relative flex max-h-[50%] min-h-[300px] min-w-[1024px] w-[50%] mt-[25rem]">
-                  <div className="animate-pop-up relative w-[100%] flex flex-col items-center justify-stretch" style={{ filter: "url(#fancy-goo)" }}>
-                    <div className="absolute top-2 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_30%_30%/150%_150%_150%_150%] animate-dialogue-top origin-center"></div>
-                    <div className="absolute bottom-2 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] animate-dialogue-bottom origin-center"></div>
-                    <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.6em] text-[#807256] font-sans font-bold">
-                      {typedMessage}
-                    </div>
+                  <div className="absolute top-2 w-[100%] h-[75%] bg-[#fdf8e3] rounded-[40%_40%_30%_30%/150%_150%_150%_150%] animate-dialogue-top origin-center"></div>
+                  <div className="absolute bottom-2 w-[94%] h-[40%] bg-[#fdf8e3] rounded-[5%_5%_20%_20%/100%_100%_100%_100%] animate-dialogue-bottom origin-center"></div>
+                  <div className="absolute w-full p-[1.2em_1em_2em_2em] text-[2.5rem] leading-[1.6em] text-[#807256] font-sans font-bold">
+                    {typedMessage}
                   </div>
-                  <div className="absolute perspective-[2rem] animate-custom-bounce">
-                    <div className="inline-block mr-auto px-8 py-3 text-2xl text-[#FFFAE5] bg-[#81A7FF] rounded-[30%/100%_100%_120%_120%] -rotate-[5deg] translate-x-[20%] translate-y-[-30%] font-sans font-semibold">
-                      Toby Nook
-                    </div>
+                </div>
+                <div className="absolute perspective-[2rem] animate-custom-bounce">
+                  <div className="inline-block mr-auto px-8 py-3 text-2xl text-[#FFFAE5] bg-[#81A7FF] rounded-[30%/100%_100%_120%_120%] -rotate-[5deg] translate-x-[20%] translate-y-[-30%] font-sans font-semibold">
+                    Toby Nook
                   </div>
+                </div>
                 <svg
-                  className={`absolute bottom-2 left-[50%] translate-x-[-50%] animate-arrow ${arrowVisible ? 'opacity-100' : 'opacity-0'}`}
+                  className={`absolute bottom-2 left-[50%] translate-x-[-50%] animate-arrow ${
+                    arrowVisible ? "opacity-100" : "opacity-0"
+                  }`}
                   width="45"
                   height="25"
                   viewBox="0 0 45 25"
@@ -423,90 +433,70 @@ export default function Home() {
                     fill="#FEB703"
                   />
                 </svg>
-                </div>
-                {/* options */}
-                {optionsVisible && (
-                  <>
-                    <div 
-                      className={`animate-pop-up absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]`} 
-                      style={{ filter: "url(#fancy-goo)" }}
+              </div>
+              {optionsVisible && (
+                <>
+                  <div
+                    className={`animate-pop-up absolute bg-[#FEED9B] rounded-[41%_41%_41%_41%/48%_48%_41%_44%] shadow-[8px_18px_0_-8px_rgba(0,_0,_0,_0.05)] items-center flex flex-col text-[#807256] px-16 py-10 space-y-3 font-semibold text-[2rem] ml-[56rem]`}
+                    style={{ filter: "url(#fancy-goo)" }}
+                  >
+                    <button
+                      className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+                      onMouseEnter={() => {
+                        setHoveredOption("yes");
+                        setPointerPosition({ top: 420, left: 1265 });
+                      }}
+                      onClick={handleYesClick}
                     >
-
-                      <button
-                        className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                        onMouseEnter={(e) => {
-                          setHoveredOption("yes");
-                          setPointerPosition({
-                            top: 420,
-                            left: 1265
-                          });
-                        }}
-                        onClick={handleYesClick}
-                      >
-                        <span className="relative z-10">
+                      <span className="relative z-10">
                         {"Yes!".split("").map((char, index) => (
-                          <span
-                            key={index}
-                            className="inline-block group-hover:animate-wave-once"
-                            style={{ animationDelay: `${index * 0.1}s` }}
-                          >
+                          <span key={index} className="inline-block group-hover:animate-wave-once" style={{ animationDelay: `${index * 0.1}s` }}>
                             {char}
                           </span>
                         ))}
-                        </span>
-                        <span
-                          className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg transition-opacity duration-300 ${
-                            hoveredOption === "yes" ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                          }`}
-                        ></span>
-                      </button>
-    
-                      <button
-                        className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                        onMouseEnter={(e) => {
-                          setHoveredOption("no");;
-                          setPointerPosition({
-                            top: 485,
-                            left: 1265,
-                          });
-                        }}
-                        onClick={handleNoClick}
-                      >
-                        <span className="relative z-10">
-                          {"Nope.".split("").map((char, index) => (
-                            <span
-                              key={index}
-                              className="inline-block group-hover:animate-wave-once"
-                              style={{ animationDelay: `${index * 0.1}s` }}
-                            >
-                              {char}
-                            </span>
-                          ))}
-                        </span>
-                        <span
-                          className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg transition-opacity duration-300 ${
-                            hoveredOption === "no" ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                          }`}
-                        ></span>
-                      </button>
-                    </div>
-                    {(pointerPosition.left !== 0) && (
-                      <img
-                        src="/pointer.png"
-                        alt="Pointer"
-                        className="absolute w-[4.5rem] h-[3.5rem] animate-back-and-fourth"
-                        style={{
-                          top: pointerPosition.top,
-                          left: pointerPosition.left,
-                        }}
-                      />
-                    )}
-                  </>
-                )}
-              </div>
-            )}
-          </>
-        )
+                      </span>
+                      <span
+                        className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg transition-opacity duration-300 ${
+                          hoveredOption === "yes" ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                        }`}
+                      ></span>
+                    </button>
+
+                    <button
+                      className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
+                      onMouseEnter={() => {
+                        setHoveredOption("no");
+                        setPointerPosition({ top: 485, left: 1265 });
+                      }}
+                      onClick={handleNoClick}
+                    >
+                      <span className="relative z-10">
+                        {"Nope.".split("").map((char, index) => (
+                          <span key={index} className="inline-block group-hover:animate-wave-once" style={{ animationDelay: `${index * 0.1}s` }}>
+                            {char}
+                          </span>
+                        ))}
+                      </span>
+                      <span
+                        className={`absolute inset-x-0 bottom-0 h-1/2 bg-[#ffcf00] rounded-lg transition-opacity duration-300 ${
+                          hoveredOption === "no" ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                        }`}
+                      ></span>
+                    </button>
+                  </div>
+                  {pointerPosition.left !== 0 && (
+                    <img
+                      src="/pointer.png"
+                      alt="Pointer"
+                      className="absolute w-[4.5rem] h-[3.5rem] animate-back-and-fourth"
+                      style={{ top: pointerPosition.top, left: pointerPosition.left }}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
