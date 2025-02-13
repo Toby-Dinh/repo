@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from 'next/image';
 
 export default function Home() {
   const messages = {
@@ -70,7 +71,7 @@ export default function Home() {
     const reactions = ["neutral", "love", "sorrowness", "sorrownesstolove"];
     reactions.forEach((r) => {
       const video = document.createElement("video");
-      video.src = `/${r}.mov`;
+      video.src = `/public/${r}.mov`;
       video.preload = "auto";
     });
   }, []);
@@ -202,11 +203,11 @@ export default function Home() {
     if (messageAudioRef.current) {
       let audioSrc = "";
       if (isNoClicked) {
-        audioSrc = `/audio/noMsg${noMessageIndex + 1}.wav`;
+        audioSrc = `/public/audio/noMsg${noMessageIndex + 1}.wav`;
       } else if (isYesClicked) {
-        audioSrc = "/audio/yesMsg.wav";
+        audioSrc = "/public/audio/yesMsg.wav";
       } else {
-        audioSrc = `/audio/msg${messageIndex + 1}.wav`;
+        audioSrc = `/public/audio/msg${messageIndex + 1}.wav`;
       }
       messageAudioRef.current.src = audioSrc;
     
@@ -306,10 +307,10 @@ export default function Home() {
       {isWelcome ? (
         <div className={`h-screen w-full ${zoomInAnimation}`}>
           <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
-            <source src="/titleBackground.mov" type="video/mp4" />
+            <source src="/public/titleBackground.mov" type="video/mp4" />
           </video>
           <div className="-mt-24 flex flex-col items-center">
-            <img src="./Logo.webp" className={`scale-50 -mt-10 ${fadeAnimation}`} alt="Logo" />
+            <Image src="/public/Logo.webp" className={`scale-50 -mt-10 ${fadeAnimation}`} alt="Logo" />
             <div className={`text-white text-3xl mt-36 ${fadeAnimation}`} style={{ fontFamily: 'system-font' }}>
               <div className="wave-text">
                 {"Press Space".split("").map((char, index) => (
@@ -328,16 +329,16 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <audio ref={mainThemeAudioRef} src="/audio/mainTheme.mp3" loop />
-          <audio ref={soundEffectAudioRef} src="/audio/soundEffects/sound-effect.wav" />
+          <audio ref={mainThemeAudioRef} src="/public/audio/mainTheme.mp3" loop />
+          <audio ref={soundEffectAudioRef} src="/public/audio/soundEffects/sound-effect.wav" />
         </div>
       ) : (
         isLoading ? (
           <div className={`flex items-center justify-center h-screen relative`}>
               {/* Gif */}
               <div className="fixed bottom-0 right-0 w-72 h-72">
-              <img
-                  src="./loader.gif"
+              <Image
+                  src="/public/loader.gif"
                   alt="Loading..."
                   className="w-full h-full object-contain"
               />
@@ -362,7 +363,7 @@ export default function Home() {
                 style={{ opacity: 1 }}
                 key={currentReaction}
               >
-                <source src={`/${currentReaction}.mov`} type="video/mp4" />
+                <source src={`/public/${currentReaction}.mov`} type="video/mp4" />
               </video>
               {pendingReaction && (
                 <video
@@ -387,20 +388,19 @@ export default function Home() {
                   }}
                   key={pendingReaction}
                 >
-                  <source src={`/${pendingReaction}.mov`} type="video/mp4" />
+                  <source src={`/public/${pendingReaction}.mov`} type="video/mp4" />
                 </video>
               )}
             </div>
             {isDialogueVisible && (
               <div className="flex items-center justify-center h-screen">
-                {/* <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" /> */}
                 {/* audio */}
-                <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
+                <audio ref={musicAudioRef} src="/public/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
-                <audio ref={soundEffect2AudioRef} src="/audio/soundEffects/sound-effect2.wav" />
-                <audio ref={soundEffect3AudioRef} src="/audio/soundEffects/sound-effect3.wav" />
-                <audio ref={loveSoundEffect} src="/audio/soundEffects/love.mp3" />
-                <audio ref={sorrownessSoundEffect} src="/audio/soundEffects/sorrowness.mp3" />
+                <audio ref={soundEffect2AudioRef} src="/public/audio/soundEffects/sound-effect2.wav" />
+                <audio ref={soundEffect3AudioRef} src="/public/audio/soundEffects/sound-effect3.wav" />
+                <audio ref={loveSoundEffect} src="/public/audio/soundEffects/love.mp3" />
+                <audio ref={sorrownessSoundEffect} src="/public/audio/soundEffects/sorrowness.mp3" />
                 {/* SVG filter */}
                 <svg xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
                   <defs>
@@ -514,8 +514,8 @@ export default function Home() {
                       </button>
                     </div>
                     {(pointerPosition.left !== 0) && (
-                      <img
-                        src="/pointer.png"
+                      <Image
+                        src="/public/pointer.png"
                         alt="Pointer"
                         className="absolute w-[4.5rem] h-[3.5rem] animate-back-and-fourth"
                         style={{
