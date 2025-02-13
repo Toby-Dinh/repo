@@ -211,11 +211,7 @@ export default function Home() {
       messageAudioRef.current.src = audioSrc;
     
       setTimeout(() => {
-        messageAudioRef.current && messageAudioRef.current
-          .play()
-          .catch((error) => {
-            console.error("Failed to play message audio:", error);
-          });
+        messageAudioRef.current?.play();
       }, 250); // 1-second delay
     }
     return () => {
@@ -461,7 +457,7 @@ export default function Home() {
 
                       <button
                         className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                        onMouseEnter={(e) => {
+                        onMouseEnter={() => {
                           setHoveredOption("yes");
                           setPointerPosition({
                             top: 420,
@@ -490,7 +486,7 @@ export default function Home() {
     
                       <button
                         className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                        onMouseEnter={(e) => {
+                        onMouseEnter={() => {
                           setHoveredOption("no");;
                           setPointerPosition({
                             top: 485,
