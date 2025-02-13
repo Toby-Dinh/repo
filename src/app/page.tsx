@@ -229,6 +229,24 @@ export default function Home() {
       soundEffect3AudioRef.current.currentTime = 0;
     }
   };
+
+  const playLoveSound = () => {
+    soundEffect3AudioRef.current?.play().catch((error) => {
+      console.error("Failed to play sound effect:", error);
+    });
+    if (soundEffect3AudioRef.current) {
+      soundEffect3AudioRef.current.currentTime = 0;
+    }
+  }
+
+  const playSorrownessSound = () => {
+    soundEffect3AudioRef.current?.play().catch((error) => {
+      console.error("Failed to play sound effect:", error);
+    });
+    if (soundEffect3AudioRef.current) {
+      soundEffect3AudioRef.current.currentTime = 0;
+    }
+  }
   
   const handleYesClick = () => {
     if (currentReaction === "sorrowness") {
