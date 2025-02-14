@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Image from 'next/image';
+import { useState, useEffect, useRef, useCallback, HtmlHTMLAttributes } from "react";
 
 export default function Home() {
   const messages = {
@@ -57,6 +56,7 @@ export default function Home() {
   const soundEffectAudioRef = useRef<HTMLAudioElement>(null);
   const soundEffect2AudioRef = useRef<HTMLAudioElement>(null);
   const soundEffect3AudioRef = useRef<HTMLAudioElement>(null);
+  const soundEffect4AudioRef = useRef<HTMLAudioElement>(null);
 
   const loveSoundEffect = useRef<HTMLAudioElement>(null);
   const sorrownessSoundEffect = useRef<HTMLAudioElement>(null);
@@ -212,13 +212,17 @@ export default function Home() {
       messageAudioRef.current.src = audioSrc;
     
       setTimeout(() => {
-        messageAudioRef.current?.play();
+        messageAudioRef.current && messageAudioRef.current
+          .play()
+          .catch((error) => {
+            console.error("Failed to play message audio:", error);
+          });
       }, 250); // 1-second delay
     }
     return () => {
       clearTimeout(timeoutId); 
     };
-  }, [displayMessage, typingSpeed, messages.msgs.length, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
+  }, [displayMessage, typingSpeed, messageIndex, noMessageIndex, isNoClicked, isYesClicked, isDialogueVisible]);
 
   const playSoundEffect = () => {
     soundEffect3AudioRef.current?.play().catch((error) => {
@@ -262,6 +266,7 @@ export default function Home() {
     playLoveSound();
   };
   
+  const sorrownessPlayedOnce = useRef(false);
   const [hasPlayedSorrownessSound, setHasPlayedSorrownessSound] = useState(false);
 
   const handleNoClick = () => {
@@ -280,6 +285,7 @@ export default function Home() {
       setHasPlayedSorrownessSound(true);
     }
   };
+  const [isSorrownessLooping, setIsSorrownessLooping] = useState(false);
 
   useEffect(() => {
     if (currentReaction === "sorrowness" && currentVideoRef.current) {
@@ -310,7 +316,7 @@ export default function Home() {
             <source src="/titleBackground.mov" type="video/mp4" />
           </video>
           <div className="-mt-24 flex flex-col items-center">
-            <Image src="/Logo.webp" className={`scale-50 -mt-10 ${fadeAnimation}`} width={100} height={100} alt="Logo" />
+            <img src="./Logo.webp" className={`scale-50 -mt-10 ${fadeAnimation}`} alt="Logo" />
             <div className={`text-white text-3xl mt-36 ${fadeAnimation}`} style={{ fontFamily: 'system-font' }}>
               <div className="wave-text">
                 {"Press Space".split("").map((char, index) => (
@@ -337,12 +343,10 @@ export default function Home() {
           <div className={`flex items-center justify-center h-screen relative`}>
               {/* Gif */}
               <div className="fixed bottom-0 right-0 w-72 h-72">
-              <Image
-                  src="/loader.gif"
+              <img
+                  src="./loader.gif"
                   alt="Loading..."
                   className="w-full h-full object-contain"
-                  width={100} // Specify the width in pixels
-                  height={100} // Specify the height in pixels
               />
               </div>
           </div>
@@ -396,6 +400,7 @@ export default function Home() {
             </div>
             {isDialogueVisible && (
               <div className="flex items-center justify-center h-screen">
+                {/* <img src="tom-nook.gif" className="scale-150 absolute z-0 -mt-36" /> */}
                 {/* audio */}
                 <audio ref={musicAudioRef} src="/audio/music.mp3" loop />
                 <audio ref={messageAudioRef} id="message-audio" />
@@ -459,7 +464,7 @@ export default function Home() {
 
                       <button
                         className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                        onMouseEnter={() => {
+                        onMouseEnter={(e) => {
                           setHoveredOption("yes");
                           setPointerPosition({
                             top: 420,
@@ -488,7 +493,7 @@ export default function Home() {
     
                       <button
                         className="relative inline-flex items-center px-4 text-[2rem] font-semibold text-[#807256] group"
-                        onMouseEnter={() => {
+                        onMouseEnter={(e) => {
                           setHoveredOption("no");;
                           setPointerPosition({
                             top: 485,
@@ -516,7 +521,7 @@ export default function Home() {
                       </button>
                     </div>
                     {(pointerPosition.left !== 0) && (
-                      <Image
+                      <img
                         src="/pointer.png"
                         alt="Pointer"
                         className="absolute w-[4.5rem] h-[3.5rem] animate-back-and-fourth"
@@ -524,8 +529,6 @@ export default function Home() {
                           top: pointerPosition.top,
                           left: pointerPosition.left,
                         }}
-                        width={100} // Specify the width in pixels
-                        height={100} // Specify the height in pixels
                       />
                     )}
                   </>
